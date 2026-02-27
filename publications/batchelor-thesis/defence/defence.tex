@@ -1,0 +1,174 @@
+\documentclass[aspectration=169]{beamer}
+\setbeamertemplate{navigation symbols}{}
+%https://mpetroff.net/files/beamer-theme-matrix/
+
+
+\usepackage[czech]{babel}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{times}
+\usepackage{hyperref}
+\usepackage{caption}
+\usepackage{listings}
+\usepackage{minted}
+\usepackage{ragged2e}
+%%\def\lcm{\mathop{\operator@font lcm}}
+\newcommand{\nequiv}{\equiv \hspace{-3.5mm} / \hspace{2.5mm} }
+
+\mode<presentation>{
+%\usetheme[]{Pittsburgh} % Pittsburgh
+\usetheme[]{Pittsburgh} % Pittsburgh
+%\usecolortheme{crane}
+\useinnertheme{rectangles} %edit theme
+
+
+%\usetheme{Boadilla}
+%\usecolortheme{seahorse}
+%\useoutertheme{shadow}
+%\usecolortheme{wolverine}
+%\usecolortheme{beetle}
+}
+
+\def\m#1{{\color{blue} #1}}
+%% TZ?
+\def\rememberenum{\xdef\rememberenum{\@arabic\c@enumi}}
+\def\continueenum{\c@enumi=\rememberenum}
+%%%%%%%
+%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%------------------------------------------------------
+%  Následujících 4 řádky upravit
+%------------------------------------------------------
+\title[Síťová komunikace aplikací v Kubernetes]{Síťová komunikace aplikací v Kubernetes s externími zařízeními v privátní síti}
+\author[J. Troják]{Jan Troják}
+\date[\today]{} % Kód předmětu, datum, zkráceno "Přednáška číslo."
+%------------------------------------------------------
+%  Na tuto sekci nesahat
+%------------------------------------------------------
+\institute[ČVUT FIT]{%
+\includegraphics[height=.12\textheight]{../assets/images/LogoCVUT.pdf}\\ \smallskip
+České vysoké učení technické v Praze, 
+Fakulta informačních technologií\\
+Katedra počítačových systémů\\ \smallskip
+}
+\begin{document}
+\begin{frame}
+\titlepage
+\end{frame}
+
+\begin{frame}{Definice problému a cíl práce}
+  \begin{block}{Komunikace interní sítě Kubernetes a přilehlé privátní sítě}
+    \begin{columns}[onlytextwidth,T]
+      \column{\dimexpr\linewidth-45mm-5mm}
+      \begin{itemize}
+        \item Kubernetes
+        \item Interní Kubernetes síť
+        \item Přilehlá privátní síť
+        \item Zařízení v přilehlé privátní síti
+        \end{itemize}
+      \column{45mm}
+      \includegraphics[width=45mm]{../assets/images/lab-server.pdf}
+    \end{columns}
+  \end{block}
+  \pause
+  \begin{block}{Cíle práce}
+  \begin{itemize}
+        \item Prozkoumat možnosti síťování v Kubernetes
+        \item Umožnit Komunikaci s privátní sítí
+        \item TCP a UDP
+        \item Integrovat řešení do systému Kubernetes
+    \end{itemize}
+    \end{block}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Motivace práce}
+    \begin{itemize}
+        \item Testování -- HIL
+            \begin{itemize}
+                \item Integrace do Cloud
+                \item CI/CD
+                \item Dynamická konfigurace systému
+            \end{itemize}
+        \item Quality Assurance
+        \item Edge Cloud Computing
+            \begin{itemize}
+                \item Snížení latence -- přenos dat
+                \item Preproccesing dat
+            \end{itemize}
+        \item Smart Cities
+    \end{itemize} 
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Navrhované řešení}
+    \begin{itemize}
+        \item KubeEdge -- MQTT, HTTP
+    \end{itemize}
+    \pause
+    \bigskip
+    \begin{itemize}
+        \item Pod s více síťovými zařízeními
+        \item PlumbingGroup -- NetworkAttachmentDeffinition
+        \item Proxy
+        \item Socat
+    \end{itemize}
+    \bigskip
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.6\linewidth]{../assets/images/pod.pdf}
+    \end{figure}
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Integrace do Kubernetes}
+    \begin{itemize}
+    \item Custom Resource Definition
+    \begin{itemize}
+        \item Device (edge-operator.k8s.dvojak.cz/v1)
+        \item Connection (edge-operator.k8s.dvojak.cz/v1)
+    \end{itemize}
+    \item Operátor EdgeOperator
+    \begin{itemize}
+        \item ValidationWebHook
+        \item Connection Kontroller
+        \item Deployment -- Selfhealing
+        \item Service -- DNS, Loadbalancing
+    \end{itemize}
+    \end{itemize}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Výsledky}
+    \begin{itemize}
+        \item github.com/dvojak-cz/Bachelor-Thesis
+        \item Instalace -- GitHub Release v1.0.0
+        \item Dokumentace: bt.project.dvojak.cz/
+    \end{itemize}
+    \bigskip
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Budoucí vývoj}
+    \begin{itemize}
+        \item Prezentovat výsledky -- Micronova AG (HIL)
+        \item Zveřejnit operátor na OperastorHub.io
+        \item LinuxDays/InstallFest
+    \end{itemize}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Otázky k obhajobě}
+    \begin{block}{Optimalizace použitelnosti a zobecnění řešení}
+    \begin{justify}
+        Vámi prezentované řešení je funkční, nicméně statické (pro specifický scénář) a uživatelsky ne příliš přívětivé.  Důsledkem těchto faktů je skutečnost, že Vaše řešení je nesnadno nasaditelné v praxi. Plánujete optimalizaci v tomto směru?
+        \end{justify}
+    \end{block}
+    \bigskip\medskip
+    \begin{block}{Podpora protokolů síťové vrstvy (IP\ldots)}
+    \begin{justify}
+        V případě směrování provozu do jiných sítí a s tímto související nutností překladu adres (NAT) zmiňujete protokoly transportní vrstvy, tj. TCP a UDP, které používají porty. Funguje Vaše řešení čistě i nad protokoly síťové vrstvy jako je např. IP?
+    \end{justify}
+    \end{block}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}\end{frame}
+\end{document}

@@ -1,0 +1,209 @@
+\documentclass{beamer}
+
+\usepackage[czech]{babel}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{times}
+\usepackage{hyperref}
+\usepackage{caption}
+\usepackage{listings}
+\usepackage{minted}
+%%\def\lcm{\mathop{\operator@font lcm}}
+\newcommand{\nequiv}{\equiv \hspace{-3.5mm} / \hspace{2.5mm} }
+
+\mode<presentation>{
+\usetheme[headheight=5mm,footheight=5mm]{Madrid}
+\usecolortheme{crane}
+%\usetheme{Boadilla}
+%\usecolortheme{seahorse}
+%\useoutertheme{shadow}
+%\usecolortheme{wolverine}
+%\usecolortheme{beetle}
+}
+
+\def\m#1{{\color{blue} #1}}
+%% TZ?
+\def\rememberenum{\xdef\rememberenum{\@arabic\c@enumi}}
+\def\continueenum{\c@enumi=\rememberenum}
+%%%%%%%
+%%%%%%%
+\newcommand{\bi}{\begin{itemize}}%Definition des Befehls \bi
+\newcommand{\ei}{\end{itemize}}%Definition des Befehls \ei
+\newcommand{\be}{\begin{enumerate}}%Definition des Befehls \be
+\newcommand{\ee}{\end{enumerate}}%Definition des Befehls \ee
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%------------------------------------------------------
+%  Následujících 4 řádky upravit
+%------------------------------------------------------
+\title[CVE-2019-0887]{Síťová a systémová bezpečnost}
+    \subtitle{Windows reverse RDP attack\\CVE-2019-0887}
+\author[J. Troják]{Jan Troják}
+\date[BI-SSB, 2021]{} % Kód předmětu, datum, zkráceno "Přednáška číslo."
+%------------------------------------------------------
+%  Na tuto sekci nesahat
+%------------------------------------------------------
+\institute[ČVUT FIT]{%
+\includegraphics[height=.12\textheight]{pic/LogoCVUT.pdf}\\ \smallskip
+České vysoké učení technické v Praze, 
+Fakulta informačních technologií\\
+Katedra informační bezpečnosti\\ \smallskip
+\tiny{
+Tato prezentace byla vytvořena jako semestrální práce v předmětu BI-SSB
+}
+}
+\begin{document}
+\begin{frame}
+\titlepage
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{\color{red!40!blue}Remote Desktop Protocol (RDP)}
+\tableofcontents
+    \bi
+        \item proprietární protokol pro vzdálenou správu počítače
+        \item emuluje přístup ke GUI počítače
+        \item vyvinut primárně pro Windows
+        \item klient-server architektura
+        \item hojně využívaný v IT podporách
+        \item hojně využívaný při správě serverů s GUI
+        \item defaultně komunikuje na portu 3389
+        \item na Windows se používá v aplikaci \textit{Remote Desktop Connection} 
+    \ei
+
+\end{frame}
+%---------------------------------------------------------------------------
+\begin{frame}
+\frametitle{\color{red!40!blue}DRP na Windows }
+\begin{center}
+     \includegraphics[width=0.8\linewidth]{pic/RDP.png}
+		\\	{\tiny Zdroj: https://www.howtogeek.com/}   
+\end{center}
+\end{frame}
+%---------------------------------------------------------------------------
+\begin{frame}
+\frametitle{\color{red!40!blue}Mstsc.exe – RDP client for windows (2019)}
+    
+
+    \bi
+        \item podívejme se nyní na verzi \textit{Mstsc.exe} z roku 2019
+        \item na rozdíl od jiných implementací umožňuje přenášet netriviální data pomocí schránky (clipboard)
+        \item pro přenos více souborů používá formát \textit{CF\_HDROP}
+            \bi
+                \item \textit{"If you are creating a CF\_HDROP format to place in a data object, you will need to construct the file name array."} {\tiny https://docs.microsoft.com/}
+                \item Pokud se vytváří objekt \textit{CF\_HDROP}, je mimo jiné nutné specifikovat pole cest k souborům.
+                \item jednotlivé cesty k souborům jsou odděleny nulovým charakterem, samotné pole je pak také ukončeno nulovým znakem
+                \item \mintinline{python}{c:\folder1.txt'\0'c:\folder2.txt'\0''\0'}
+            \ei
+    \ei
+\end{frame}
+
+%---------------------------------------------------------------------------
+\begin{frame}
+\frametitle{\color{red!40!blue}Proces kopírování souborů pomocí sdílené schránky}
+    \bi
+        \item zaměřme se na případ, kdy kopírujeme data ze serveru na klienta
+    \ei
+    \be
+        \item Klient na serveru pomocí RDP zkopíruje data.
+        \item Na serveru se vytvoří datový balíček ve formátu \textit{CF\_HDROP}.
+        \item Klient na svém PC vloží data (paste).
+        \item Vložení spustí sekvenci kroků.
+        \item Klient přinutí server připravit a odeslat data na klienta.
+        \item Klient aplikace RDP pomocí procesu \textbf{\textit{dpclip.exe}} přistoupí k vytvořenému datovému formátu \textit{CF\_HDROP}. \textbf{\textit{dpclip.exe}} tento formát převede na formát \textit{FileGroupDescriptor}.
+        \item Po vytvoření \textit{FileGroupDescriptor} se data pošlou pomocí RDP ke klientovi.
+        \item Klient si uloží data do své vlastní schránky a následně data vloží, jako by se jednalo o data z jeho PC.
+    \ee
+\end{frame} 
+
+
+%---------------------------------------------------------------------------
+\begin{frame}
+\frametitle{\color{red!40!blue}Proces kopírování souborů pomocí sdílené schránky}
+         \includegraphics[width=1.0\linewidth]{pic/copy_flow.png}
+		\\	{\tiny Zdroj: https://research.checkpoint.com/}   
+\end{frame}
+
+%---------------------------------------------------------------------------
+\begin{frame}
+\frametitle{\color{red!40!blue}Zneužití sdílené schránky}
+    \bi
+        \item ve chvíli, kdy ke klientovi přijdou data \textit{FileGroupDescriptor}, klient nijak nekontroluje jejich správnost a rovnou si je překopíruje do vlastní lokální schránky
+        \item zároveň klient nekontroluje, zda je cesta ke kopírovaným souborům škodlivá (neobsahuje relativni cesty)
+        \item pokud by se útočníkovi na straně serveru podařilo podvrhnout posílaná data, tak si toho klient nemusí všimnout
+        \item útočník by se mohl pokusit do posílaných dat přidat svůj malware
+    \ei
+    
+    \bi
+        \item k transformaci dat mezi schránkou na straně serveru a formátem pro přenos dat slouží proces  \textbf{\textit{dpclip.exe}}
+        \item tento proces běží jako samostatný proces a může být na přání uživatele ukončen/spuštěn
+        \item proto stačí, aby útočník (na straně serveru) ukončil \textbf{\textit{dpclip.exe}} a spustil svůj vlastní, který bude měnit odesílaná data
+    \ei
+\end{frame}
+
+\begin{frame}
+\frametitle{\color{red!40!blue}Zneužití sdílené schránky}
+    \bi
+        \item k transformaci dat mezi schránkou klienta a formátem pro přenos dat slouží proces \textbf{\textit{dpclip.exe}}
+        \item tento proces běží jako samostatný proces a může být na přání uživatele vypnut/spuštěn.
+        \item proto stačí, aby útočník ukončil \textbf{\textit{dpclip.exe}} a spustil svůj vlastní, který bude měnit odesílaná data.
+    \ei
+    \noindent\rule{\textwidth}{0.4pt} \\
+    \bi
+        \item útočník takto může přidáním souborů do schránky a modifikováním cesty k souboru poslat libovolný soubor do libovolného adresáře na počítač klienta. Například do startup složky. Stačí jen vhodně zvolit cestu k souboru, která se pošle.
+    \ei
+\end{frame}
+
+\begin{frame}
+\frametitle{\color{red!40!blue}Zneužití sdílené schránky}
+    \bi
+        \item proces vkládání nechtěného souboru na klientův počítač
+        \item kopíruje se soubor s názvem \mintinline{python}{..\filename.txt}. Kvůli tomu, že klient nekontroluje, co se mu propíše do schránky, tak útočník může vložit nechtěná data na cizí počítač data, kam on chce. 
+    \ei
+    \begin{center}
+    \includegraphics[width=0.7\linewidth]{pic/demo1.png}
+		\\	{\tiny Zdroj: https://research.checkpoint.com/}        
+    \end{center}
+  
+\end{frame}
+
+\begin{frame}
+\frametitle{\color{red!40!blue}Zneužití sdílené schránky}
+\begin{center}
+    \includegraphics[width=0.9\linewidth]{pic/demo3.png}
+	\includegraphics[width=0.9\linewidth]{pic/demo2.png}
+		\\	{\tiny Zdroj: https://research.checkpoint.com/}
+\end{center}
+     
+\end{frame}
+
+\begin{frame}
+\frametitle{\color{red!40!blue}Vyřešení problému}
+\begin{center}
+    \bi
+        \item tento problém byl nahlášen a opraven
+        \item společnost Microsoft vydala aktualizaci pro systémy Windows, ve kterých tento problém vyřešila
+        \item aktualizace byla vydaná dokonce pro některé již nepodporované systémy (WIN XP...)
+    \ei
+\end{center}
+     
+\end{frame}
+
+\begin{frame}
+\frametitle{\color{red!40!blue}Zdroje}
+\begin{center}
+    \bi
+        \item \url{https://research.checkpoint.com/2019/reverse-rdp-attack-code-execution-on-rdp-clients/}
+        \item \url{https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-rdpeclip/14e60d52-e0da-4e19-9455-e8643ff17673?redirectedfrom=MSDN}
+        \item \url{https://docs.microsoft.com/en-us/windows/win32/shell/clipboard}
+        \item \url{https://cyware.com/news/microsoft-patches-reverse-rdp-attacks-and-third-party-clients-ed559adc}
+    \ei
+\end{center}
+     
+\end{frame}
+
+
+
+\end{document}

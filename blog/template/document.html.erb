@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= doctitle %></title>
+    <link rel="stylesheet" href="./style.css">
+    
+    <link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    <link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" disabled>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
+    <script>
+        // Prevence probliknutí bílé: Nastavení tématu před vykreslením body
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        if (savedTheme === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        }
+    </script>
+    <% if attr? :stem %>
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({
+                tex2jax: {
+                    inlineMath: [['\\$','\\$'], ['\\(','\\)']],
+                    displayMath: [['\\[','\\]']]
+                },
+                asciimath2jax: {
+                    delimiters: [['\\$','\\$']]
+                }
+            });
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js?config=TeX-MML-AM_HTMLorMML"></script>
+    <% end %>
+</head>
+<body>
+
+<button id="theme-toggle" title="Přepnout tmavý/světlý režim">
+    <span class="icon">🌓</span> 
+    <span class="text">Režim</span>
+</button>
+
+<aside id="sidebar-left">
+    <h3>Ostatní příspěvky</h3>
+    <ul>
+        <li><a href="clanek-1.html">Úvod do AsciiDocu</a></li>
+        <li><a href="clanek-2.html">Jak nastavit Asciidoctor</a></li>
+        <li><a href="clanek-3.html">Moderní CSS Grid</a></li>
+        <li><a href="index.html"><strong>Zpět na hlavní výpis</strong></a></li>
+    </ul>
+</aside>
+
+<article>
+    <header>
+        <h1><%= doctitle %></h1>
+    </header>
+
+    <main>
+        <%= content %>
+    </main>
+
+    <% if attr? :toc %>
+    <nav id="toc">
+        <strong>V tomto článku</strong>
+        <%= converter.convert document, 'outline' %>
+    </nav>
+    <% end %>
+
+    <footer>
+        <div class="author-info">
+            Publikoval <strong><%= attr :author %></strong> dne <%= attr :revdate %>.
+        </div>
+    </footer>
+</article>
+
+<script>
+    // Inicializace Highlight.js
+    hljs.highlightAll();
+
+    const btn = document.getElementById('theme-toggle');
+    const darkStyle = document.getElementById('hljs-dark');
+    const lightStyle = document.getElementById('hljs-light');
+
+    function updateHljs(isDark) {
+        darkStyle.disabled = !isDark;
+        lightStyle.disabled = isDark;
+    }
+
+    // Nastavení správného stylu kódu při načtení
+    updateHljs(document.documentElement.getAttribute('data-theme') === 'dark');
+
+    btn.addEventListener('click', () => {
+        let currentTheme = document.documentElement.getAttribute('data-theme');
+        let targetTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        
+        document.documentElement.setAttribute('data-theme', targetTheme);
+        localStorage.setItem('theme', targetTheme);
+        updateHljs(targetTheme === 'dark');
+    });
+</script>
+</body>
+</html>

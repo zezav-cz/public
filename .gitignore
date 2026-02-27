@@ -1,0 +1,25 @@
+dist
+.dist
+
+# Ignore all PDFs by default
+*.pdf
+
+# Exceptions for existing PDFs to be tracked by LFS
+!publications/diploma-thesis/trojaj12-assignment.pdf
+!publications/diploma-thesis/images/logoCVUT.pdf
+!publications/sdn-migration/img/wan04.drawio.pdf
+!publications/sdn-migration/img/wan03.drawio.pdf
+!publications/sdn-migration/img/wan02.drawio.pdf
+!publications/sdn-migration/img/sda01.drawio.pdf
+!publications/sdn-migration/img/sda00.drawio.pdf
+!publications/worker-site/img/fit-logo-en.pdf
+!publications/worker-site/img/fit-logo-cz.pdf
+!publications/NI-PDP/protocol.pdf
+!publications/windows-reverse-rdp-attack/pic/LogoCVUT.pdf
+!publications/batchelor-thesis/assets/trojaj12-assignment.pdf
+!publications/batchelor-thesis/assets/images/cvut-logo-w.pdf
+!publications/batchelor-thesis/assets/images/LogoCVUT.pdf
+!publications/batchelor-thesis/assets/images/lab-server.pdf
+!publications/batchelor-thesis/assets/images/sampleNet.pdf
+!publications/batchelor-thesis/assets/images/pod.pdf
+!publications/batchelor-thesis/assets/images/lab.pdf

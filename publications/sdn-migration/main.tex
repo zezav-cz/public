@@ -1,0 +1,276 @@
+\documentclass{article}
+\usepackage{graphicx} % Required for inserting images
+\usepackage{hyperref}
+\usepackage{lipsum}
+\usepackage{amsmath}
+\usepackage{csquotes}
+\usepackage[czech]{babel}
+\usepackage[style=iso-numeric]{biblatex}
+\usepackage{microtype}
+\addbibresource{bib.bib}
+
+
+\title{
+Moucha.org migrace na SD-WAN a SD-Access \\
+\large \href{https://fit.cvut.cz/cs}{FIT ČVUT}
+}
+\author{Jan Troják \textless\href{mailto:trojaj12@fit.cvut.cz}{trojaj12@fit.cvut.cz}\textgreater}
+\date{14. 1. 2024}
+
+\begin{document}
+
+\maketitle
+
+\section*{Abstract}
+The document is a proposal for transitioning the network infrastructure of moucha.org from traditional networking to Software-Defined Networking (SDN), focusing on SD-WAN and SD-Access technologies. The document begins with defining key concepts. It then details the current network state and evaluates its challenges, such as complexity, cost, and scalability issues.
+
+The proposal recommends a shift to SD-WAN for connecting locations through a service provider, integrating a data center and DMZ using rented services, and implementing virtualization for network components. Emphasis is on scaling, cost reduction, and security improvements.
+
+\bigskip
+Dokument je návrhem na přechod síťové infrastruktury moucha.org z tradičního networkingu na Software-Defined Networking (SDN) se zaměřením na technologie SD-WAN a SD-Access. Dokument začíná definováním klíčových pojmů. Poté podrobně popisuje aktuální stav sítě a vyhodnocuje její problémy, jako je složitost, náklady a problémy se škálovatelností.
+
+Návrh doporučuje přechod na SD-WAN pro připojení lokalit prostřednictvím poskytovatele služeb, integraci datového centra a demilitarizované zóny pomocí pronajatých služeb a implementaci virtualizace pro síťové komponenty. Důraz je kladen na škálování, snížení nákladů a vylepšení zabezpečení.
+\section*{List of key words}
+SDN, network infrastructure, SD-WAN, SD-Access, virtualization, moucha.org, Cisco\\
+\bigskip
+SDN, síťová infrastruktura, SD-WAN, SD-Access, virualizace, moucha.org, Cisco
+
+\newpage
+\tableofcontents
+\newpage
+
+\section{Úvod}
+\subsection{Definice}
+\begin{itemize}
+  \item \textbf{Management plane, Control plane, Data plane}\\
+  Management plane, Control plane, Data plane jsou tři rozdílný pohledy na klasické modely síťování, kdy každý z těchto pojmů představuje jinou roli v rámci služby, kterou nabízí.\\
+  Management plane představuje rozhraní pro správu síťové infrastruktury a síťových prvků. Příkladem MP může být webové rozhraní routeru.\\
+  Control plane je zodpovědné za řízení sítových protokolů. Příkladem této vrstvy může být logika starající se o routovací protokoly.\\
+  Data plane je poslední vrstva. Jedná se o fyzickou vrstvu, která se stará o samotné síťování (přesuny informací) po síti.\cite{baeldung_2023_differences}\cite{moucha_2021_nimpi}
+  Tyto abstrakční vrstvi umožňují rozšířený pohled na síťovou infrastrukturu.
+  
+  \item \textbf{ASIC}\\
+  Application Specific Integrated Circuit je označeni pro digitální integrovaný obvod, který je navařen pro konkrétní použití. Velmi zmámím použitím těchto zařízení je v těžbě kryptoměn, kde je vyžadován velmi výkoný hardware právě pro specifické výpočty při těžbě digitálních měn. Pravě vysoký výkon je důvodem, poč se tyto integrované obvody velmi často využívají. \cite{strickx_2020_asics} V oblasti počítačových sítí jsou často používaný pro efektivní přepínání a routování. Jelikož je možné logiku těchto úkonů přenést přímo do integrovaných obvodů, je možné tyto úkony provádět velmi efektivně. \cite{moucha_2021_nimpi} Často jsou pro tyto účely využívány i FPGA zařízení, které je možné dynamicky konfigurovat.
+
+  \item \textbf{Zero-touch provisioning}\\
+  \textit{\uv{Zero-touch provisioning (ZTP) je metoda nastavení zařízení, která automaticky konfiguruje zařízení. ZTP pomáhá týmům IT rychle nasadit síťová zařízení v rozsáhlém prostředí a eliminuje většinu ruční práce spojené s jejich přidáváním do sítě.}}\cite{gillis_what}. Tato možnost vznikla právě díky oddělenému pohledu na síťování s rozšířeným modelem Management plane, Control plane, Data plane.\cite{moucha_2021_nimpi}
+  
+  \item \textbf{SDN}\\
+  \textit{\uv{Softwarově definované sítě (SDN) jsou kategorií technologií, které umožňují správu sítě prostřednictvím softwaru. Technologie SDN umožňuje správcům IT konfigurovat sítě pomocí softwarové aplikace. Software SDN je interoperabilní, což znamená, že by měl být schopen pracovat s jakýmkoli směrovačem nebo přepínačem bez ohledu na to, který výrobce jej vyrobil.}}\cite{cloudflare_what}
+  
+  \item \textbf{SD-WAN}\\
+  \textit{\uv{Softwarově definovaná rozsáhlá síť (SD-WAN) je virtuální architektura WAN, která podnikům umožňuje využívat jakoukoli kombinaci přenosových služeb.}}\cite{aruba_2024_what}. SD-WAN je klasická WAN síť postavená na SDN technologii. Často se jedná o službu poskytovanou třetímy stranami (například, poskytovateli internetu...).\cite{moucha_2021_nimpi}
+  
+  \item \textbf{SD-Access}\\
+  SD-Access (Software-Defined Access) je analogie klasické LAN sítě, založené na SDN technologii. Jedná se o pojem používaný společností cisco \cite{moucha_2021_nimpi}
+  
+  \item \textbf{Overlay síť}\\
+  \textit{\uv{Overlay síť je virtuální síť, která je navrstvena na stávající fyzickou síť, známou jako Underlay síť. Hlavním účelem překryvné sítě je zlepšit funkčnost a výkonnost podkladové infrastruktury. Dosahuje toho přidáním další vrstvy řízení a inteligence, která umožňuje lepší směrování, správu a optimalizaci dat.}} \cite{techclaw_2023_what}
+  
+  \item \textbf{Underlay}\\
+  \textit{\uv{Underlay síť je fyzická infrastruktura, která tvoří páteř celého síťového systému. Zahrnuje směrovače, přepínače, kabely a další hardwarové komponenty, které usnadňují přenos dat. Underlay síť je zodpovědná za přenos dat mezi různými místy.}}\cite{techclaw_2023_what}
+  
+  \item \textbf{Spine and leaf topology}\\
+  Spine and leaf topologie je způsob zapojení sítě, který je navržen pro oblasti, potřebující jednoduchou škálovatelnost a vysokou dostupnost. Často se jedná o způsob zapojení počítačových systému poskytujíc nějakou službu - příkladem mohou být datacentra. \cite{moucha_2021_nimpi}
+\end{itemize}
+\subsection{State of the art}
+Tento dokument popisuje návrh migrace z klasického pojetí síťování do pojetí SDN. SDN je dnes považován za tzv. \textit{State of the art of CS}. Klasickým pojetím síťování je v tomto dokumentu chápáno síťování bez podpory SDN, kdy síť je spravovaná ručně a to fyzickými zařízeními k tomu uřečenými (FW, směrovače, přepínače...). Jednoduchou poučkou, jak rozdělit tyto dvě pojetí, je, že v klasickém síťování se shodují owerlay a underlay network.
+
+Na začátku bych rád připomenul motivace a případy, na které jsem narazil při studiu, které mohou vést k potřebě aplikace SDN.
+
+\begin{itemize}
+
+    \item \textbf{Kubernetes, The Container Network Interface}\\
+    Kubernetes je opensource orchestrační systém pro správu, provozovaní kontejnerových aplikací.\cite{kubernetes_2019_kubernetes} Kubernetes typicky operuje nad více uzly (servery), na kterých decentralizovaně provozuje a spravuje kontejnerové aplikace. Pro potřeby komunikace mezi jednotlivými kontejnery je potřeba zajistit síťovou komunikaci. Tato komunikace není součástí kubernetes systému, ale je řešena pomocí CNI.\cite{kubernetes_2019_kubernetes} CNI je definované síťové rozhraní (standard), které definuje požadavky pro implementaci CNI modulů.\cite{networkop_2023_the} Tyto moduly pak mají za úkol zprostředkovat síťovou konektivitu mezi kontejnery v klastru. Typicky abstrahuji underlay network a vytváří owerlay síť. Jedná se o aplikaci SDN. Tyto moduly často využívaly a využívají nástroje dostupné v linuxovém kernelu jako jsou netfilters...\cite{networkop_2023_the}. Dnes je za State of the art SDN síťování v kernelu linuxu považována technologie eBPF, která je vyvíjena linuxovou komunitou právě pro potřeby SDN.\cite{openstack_2024_what} Dnes dvěmi nejznámějšími implementacemi CNI pomocí eBPF jsou Cilium a calico.\footnote{Pro více informací o eBPF doporučuji dokument od \textit{Speakeasy Productions} \href{https://youtu.be/Wb_vD3XZYOA}{eBPF: Unlocking the Kernel}}
+    
+    \item \textbf{Private cloud}\\
+    Velmi podobný problém popsaný výše (Kubernetes, The Container Network Interface), řeší i privátní cloud orchestrátory. Pro propojení jednotlivých uzlů v privátním cloudu se velmi často používají zmíněné CNI pluginy, nebo přímo řešení poskytovaná jednotlivými cloudovými řešeními (openstack, vmware...).\cite{vondra_2023_iaas}
+    
+    \item \textbf{Bare metal cloud}\\
+    Existují týmy, který se stará o infrastrukturu privátních cloudů. Tyto cloudy mohou být složeny z několik stovek serverů po celém světě. Tyto uzly jsou fyzické servery a komunikují primárně pomocí klasických síťových topologií. Možnost vystavit privátní overlay newtork nad těmito servery by jistě zjednodušila některé aktuálně prováděné úkony nad danou infrastrukturou.
+    
+    \item \textbf{HIL testing}\\
+    Roustoucí zájem virualizace došel již i do evropského automobilového průmyslu. Příkladem tohoto je sploečnost CARIAD. Jedním z témat, kterými se momentálně zabývají je modularizace, virtualizace a dynamické propojování HW komponent pro jejich testování. Jedním z možných řešení je využití právě SDN techonologií.
+\end{itemize}
+
+Výše popsané případy jsou jen několik možných vybraných oblastí, kde se nabízí využít technologií SDN. Tyto příklady jsou často motivované přechodem služeb do cloudu, tendencí virtualizace a automatizace. Tento trend se promítl i do oblasti klasického síťování. Dále v tomto dokumentu bude diskutováno SDN síťování z pohledu síťování topologií v firemním prostředí. Dále se SDN omezí primárně na SD-WAN a SD-Access řešení od společnosti Cisco.
+
+\subsubsection{SD-WAN}\cite{redakce_2020_v}
+MPLS přivedl velkou změnu v routování internetu. Díky MPLS bylo možné částečně odložit klasické routovací protokoly a nahradit je tunely. Tyto tunely pak slouží jako portály z jedné strany sítě do druhé, bez ohledu na underlay network. Nevíhodou MPLS tunelů je jejich komplexita, požadavky na infrastrukturu, cena a malá flexibilita v rámci konfigurace. Momentální známou náhradou je technologie SDN-WAN poskytovaný různými service providery. Jedná se o službu, jak definovat chování owerlay network SD-WAN providerů pomocí klasických technologií (web GUI, API...). Toto umožňuje vysokou flexibility a snadnou konfiguraci zmíněných tunelů mezi lokacemi připojenými napříč internetem. Výhodou této technologie je flexibilita, cena, jednoduchost konfigurace, abstrakce a izolace na underlay network SD-WAN providera. Dalšími pozitivními aspekty SD-WAN je bezpečnost, lepší monitoring a s tím související QoS. [moucha sdn2]
+
+\subsubsection{SD-Access}
+Stejně jako SD-WAN tvoří owerlay network nad sítovou infrastruturou SD-WAN providera, tak SD-Access umožňuje implementovat myšlenky SDN i do lokálních privátních sítí. SD-Access přináší obrovskou změnu nad administrací privátních sítí. Díky SD-Access lze jednoduše oddělit logickou a fyzickou (owerlay a underlay) vrstvu sítě. Toto přináší opět velkou flexibilitu... Zásáadní změnou, která SD-Access je právě oddělení těchto dvou pohledů na síťovou infrastruktut. Toto přináší velkou možnost škálování. [moucha sdn3]
+
+Osobně spatřuji dvě hlavní nevýhody současných SDN technologií. První nevýhoda plyne ze stáří tohoto konceptu. SDN je relativně nová technologie a proto není tolik prozkoumaná, vyzkoušená a expertů na tuto problematiku je velmi málo. Druhou nevýhodou je vrstva abstrakce kterou SDN do síťování přináší. Abstrakce je ještě pozitivní, ale v případě problémů, troubleshootingu... může vyžadovat hluboké znalosti, které jsou jsou často skryté pod vrstvou abstrakce. Tyto nevýhody jsou ale v obecném měřítku často utlačeny výhodami, které nám SDN nabízí.
+
+\section{Cíl}
+Cílem totoho dokumentu je předložit a diskutovat návrh migrace z klasického síťování do SDN v rámci organizace moucha.org. Tento návrh bude založen na technologiích SD-WAN a SD-Access od společnosti Cisco. Návrh bude založen na analýze současného stavu sítě a požadavků na novou síť. Dále bude diskutována implementace tohoto návrhu a jeho výhody a nevýhody.
+
+\section{Analýza}
+\subsection{Současný stav}
+Moucha.org je smyšlena organizace obsahující 5 lokací. Každá z lokací má svou síťovou infrastrukturu a korektně připojuje následující zařízení sloužící koncovým uživatelům: přenosné Notebooky, WiFi telefony, Přenosné scanery, Přenosné platební terminály, VoIP zařízení a Desktopové pracovní stanice. Dále jsou lokace rozděleny do 2 skupin. Hlavní lokace a menší lokace. Menší lokace oproti hlavním lokacím neobsahují propojení pomocí MPLS sítě, neobsahují DMZ a privátní DC. Topologický rozdíl mezi lokacemi je i v míře redundance. Všechny lokace obsahují alespoň minimální míru redundance, pro dosažení HA.
+
+Lokace jsou navrženy dle 3 tier modelu. Jedná se o klasický model, který je populární a dobře známý.
+
+Access Layer obsahuje klasické přepínače, propojující výše zmíněné zařízení dle dané lokace (místnost, chodba...), navíc jsou do přepínačů zapojené LAPs pro poskytnutí bezdrátového WiFi připojení. Tyto přepínače jsou projeny pomocí MEC do L3 přepínačů v distribution layer. Většina zařízení (které to podporují) v této vrstvě používá PoE, toto velmi usnadňuje instalaci a správu zařízení.
+
+Distribution layer obsahuje sadu L3 přepínačů, mezi sebou propojenými pomocí VSL. Díky tomuto se chovají jako jeden velký přepínač. toto přináší jedoduchou konfiguraci, snadnou správu, díky MEC redundanci a tím i HA. Díky VSL v sítí nejsou L2 loops a tudíš není potřeba žádného protokolu, který by problém smyček řešil (typicky STP). Díky vlastnostem L3 přepínačů, dokážou tyto zařízení propojovat jednotlivá zařízení bez nutnosti komunikace s core layer. Přepínače v této vstvě zároveň ukončují VLANy a obsahují WLAN kontroler pro správu LAPs.
+
+Mezi Distribution layer a Core layer jsou připojeny firewally, tyto firewally sloužící pro izolaci a ochranu core layer, distribution layer, DMZ a privátního DC. Tyto FW jsou spravovány přímo a není využita žádná centralizovaná správa (Cisco Secure Firewall Management Center...). Tento fakt velmi ztěžuje konfiguraci a správu a škálovatelnost těchto zařízení. Konfigurace pravidel FW není známá, ale dá se předpokládat, že jsou nastavena pravidla směrem z core layer do zbytku sítě, dále DMZ do DC a distribution layer. Předpokládám, že ostatní toky dat jsou proveleny bez větších restrikcí.
+
+DMZ a privátní DC jsou topologicky oděleny. Díky tomuto je mnohem jednodužší sráva. Zároveň se jedná o požadovanou vlastnost z pohledu bezpečnosti. Obě části této sítě jsou navrženy pomcí Spine and leaf topology topologie.
+
+Core layer obsahuje dva respektive 3 routery. Každý z těchto routerů má hlavní službu, kterou zasíťuje (MPLS nebo internet nebo PSTN) ale zároveň slouží jako záloha pro ostatní služby, o které se starají ostatní routery v dané lokaci.
+
+\subsection{Vyhodnocení současného stavu}
+Jedná se klasickou 3 tier design sítě, která splňuje zavedené postupy. Díky tomu, že se jedná o standartní návrh, je relativně jednoduchá zpráva a této sítě - z pohledu zkušeností administrátorů. Tato síť je redundantí a splňuje základní požadavky na HA. Spine and leaf topology je jistě vhodnou volbou pro DMZ a DC, jelikož umožňuje jenoduché škálování. Díky redundanci a MPLS tunelům v hlavních lokacích je navžená síť dobře propustná a stabilní.
+
+Nevýhodou zmíněné sítě je její komplexita. Tato komplexita velmi ztěžuje jakékoliv změny v síti. S komplexitou přichází i cenová náročnost této sítě. Navržená síť je velmi drahá z pohledu HW, licencí a služeb jako MLPS. Dalším problémem je náročnost zprávy sítě. Jelikož se jedná o klasickou inrastrukturu je velké množství zařízení konfigurováno ručně. To je jistě časově, finančně náročné a náchylné na chyby. V neposlední řadě je tato topologie velmi náročně škálovatelná.
+
+Níže bude prezentován návrh na přechod s SDN, který by měl zmíněné problém řešit.
+
+\section{Návrh}
+V této části budou posáný a navrženy změny sítě v rámci orgranizace moucha.org. Tyto změny budou založeny na analýze současného stavu a požadavků na novou síť. Dále budou diskutovány výhody a nevýhody navrženého řešení. Pro jednoduchost rozdělme návrh sítě do několika celků. Tyto celky budou posupně odkrývat navrhované změny a komentovat jejich přínos. První část bude popisovat změny v rámci SD-WAN a druhá část změny v rámci SD-Access.
+
+\subsection{Propojení lokací pomocí SD-WAN}
+V současné podobě jsou lokace propojeny s okolním světem až třemi službami (internet, MPLS a PSTN). Toto připojení je redundantní, funkční, ale komplexní. Pro propojení jednotlivých lokací můžeme využit SD-WAN providera. Pro účely práce řekněme, že jsem nalezli SD-WAN providera, který podporuje Cisco zařízení, poskytuje SD-WAN službu. Tento provider se jmenuje SDWP. SDWP nám umožní částečnou konfiguraci jejich CEdge zařízeních, pomocí kterých propojíme všechny potřebné lokace. Pro připojení využijeme možnost administrace SDWP CEdge zařízení z pomocí vlastního VSmart, pro zatím řekněme, že VSmart je hostované  public cloud providerem AWS. Tímto propojíme každou lokaci s právě děma CEdge zařízeními (pro redundanci). Pro zapojení využijeme U-Lock zapojení. 
+
+Tímto jsme schopni se vzdát MPLS služby, která je velmi drahá a nahradit ji SD-WAN službou, která je levnější a flexibilnější. Díky tomuto propojení můžeme snadno přidávat nové lokace, nebo měnit propojení mezi lokacemi.
+
+Hrubý návrh zapojení je zobrazen na obrázku \ref{fig:sdwan02}.
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{img/wan02.drawio.png}
+    \caption{Zapojení SD-WAN01}
+    \label{fig:sdwan02}
+\end{figure}
+
+Výše uvedené navržené změny znamenají nastavení kontraktu s SD-WAN providerem a umožují zbavyt se stávajícíh MPLS propojení. SD-WAN nám teď umožní lépe propojit i neprimární lokace. Dále SD-WAN přináší velkou volnost v konfiguraci, díky tomu bude mnohem snazší škálovat organizaci moucha.org i do dalších lokací. Tato volnost a relativně snadná konfigurace přináší i bezpečnostní výhosy, jelikož bude možné lépe reagovat na bezpečnostní rizika a incidenty.
+
+\subsection{Datacentrum a DMZ}
+V momentálním návrhu je DC a DMZ je součástí vlastní infrastruktury. Toto může být finančně efektivní v případě, že je datacentrum opravdu hodně využíváno. Z popisu organizace moucha.org vyplývá, že datacentrum spíše není na tolik velké, aby se vyplatilo si ho spravovat na vlastním HW. Z tohoto důvodu navrhuji využít pronájem nějakých nějakého datacentra (Hetzner...). Toto nám velmi zjednoduší správu takového datacentra (nemusíme řešit HW, chlazení, HA...) a zároveň nabídne velkou volnost. Předpokládejme tedy, že jsem našli datacentrum s názvem DCP, kde budeme hostovat naše DC a DMZ. Pro nyní spojme DC a DMZ do jednoho datacentra. Toto rozhodnutí bude dále diskutováno
+
+Pronajaté DC od DCP se tímto stává naší další lokací. Tuto lokaci můžeme propojit s ostatními lokacemi pomocí SD-WAN, tím se nám rozšíří naše schéma o DC, viz obrázek \ref{fig:sdwan03}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{img/wan03.drawio.pdf}
+    \caption{Zapojení SD-WAN02}
+    \label{fig:sdwan03}
+\end{figure}
+
+Využití DCP nám jednoznačně ulehčí práci spojenou se správou privátního datacentra. Zároveň umožǔje flexibilnější škálování datacentra a DMZ. Finanční náročnost je diskutabilní, ale z popisu organizace moucha.org bych si odvážil tvrdit, že pronájem datacentra bude cenově výhodnější, než spránan vlastního privátního datacentra. Nevýhodou DCP může být bezpečnost, jelikož se nejedná o vlastněný HW, je zapotřebí počítat s možností úniku dat...
+
+\subsection{Virtualizace}
+Spousta komponent, které stávající síť obsahuje, může být virtualizována. Toto nám velmi zjednoduší správu a zároveň sníží náklady na HW. Z tohoto důvodu je rozumné některé tyto komponenty virtualizovat. Předpokládejme, že v našem DC provozujeme některý z vizualizačních nástrojů. Tímto může být momentálně používaný VSphere. Osobně bych se přiklonil k nějaké open-source technologii, jako je například OpenStack. Díky tomuto vizualizačnímu nástroji (a orchestrátoru) je možné jednoduše vytvářet potřebné virtuální stroje pro následující komponenty: MS Windows Server 2022 (AD), CUCM, Cisco Unity, Virtual Wireless LAN Controller, NAS (Manila služba v oupenstacku)\cite{openstack_2024_what}, NextCloud, Cisco ISE 3, Cisco WebEx a Cisco Jabber a Firewall.
+
+Využití virtualizace téměř vždy přináší finanční úlevu\cite{humbledevassychirammal_2016_mastering}. Virtualizace umožňuje vysokou flexibilitu a škálovatelnost. Nevýhodou je potřeba administrátora, který virtualizaci dostatečně rozumí. Virtualizace přináší i větší míru bezpečnosti. Vzhledem k tomu, že se jedná dnes preferovaný způsob správy větších systémů, jsou v této oblasti zavedeny dobré a prověřené postupy, který by měli minimalizovat bezpečností incidenty. 
+
+\subsection{Napojení na internet a PSTN}
+Momentálně je každá z lokací napojena separátně na internet a PSTN. Vzhledem k tomu, že každá incomming komunikace do vnitřní sítě musí být kontrolovaná FW, dává smysl připojovat se na internet přímo z data centra, kde jsou tyto FW uloženy. Proto navrhuji připojit všechny lokace na internet a PSTN přes DC. Díky tomuto může být celá organizace napojeni z jednoho místa, které máme plně pod kontrolou. Veškerá komunikace (internetová a telefonní) bude přiváděna do datacentra a následně pak zpracována FW a dalšími komponentami. Schéma je zobrazeno na obrázku \ref{fig:sdwan04} níže.
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{img/wan04.drawio.pdf}
+    \caption{Zapojení SD-WAN03}
+    \label{fig:sdwan04}
+\end{figure}
+
+Výhodu napojení do internetu a PSTN skrze datacentrum je jednoduchost. Veškerá komunikace prochází jednou definovanou cestou. Z tohoto důvodu jsou tato napojení jednoduchá na správu. V zmíněném návrhu by se mohlo zdát, že chybí redundance těchto spojení. Toto lze řešit různými způsoby. Zde je navařeno redundantní spojení v rámci datacentra PSTN. Detaily budou dohodnuty s poskytovatele PSTN. 
+
+\subsection{Shrnutí doposud navrhovaných změn}
+Výše navrhované změny přinesou úsporu finanční s pohledu potřebného HW a správy sítě. Zmíněné změny přinesou velkou škálovatelnost, díky vlastnostem virtualizace a SD-WAN. Oproti stávajícímu návrhu zde chybí MPLS spojení. Toto spojení je plnohodnotně nahrazeno SD-WAN. Datacentrum bylo migrováno z primárních lokací. Všechny pobočky by měli mít přístup k doposud využívaným službám.
+
+\subsubsection{Seznam provedených změn}
+\begin{itemize}
+    \item Napojení na SD-WAN
+    \item Zrušení MPLS
+    \item Vytvoření dedikovaného datacentra
+    \item Migrace služeb do datacentra (FW...)
+    \item Spojení DMZ a DC
+    \item Prodej nepotřebného HW\\
+    Fyzické FW, datacentrum, datacentrum DC, moduly do 
+    \item Nákup potřebného HW a služeb\\
+    Kontrakt s SDWP, kontrakt s DCP
+\end{itemize}
+
+\subsection{Změna fyzické topologie primárních a sekundárních lokací}
+Změna ve fyzickém zapojení je silně odvozena od stávající topologie. Momentálně byly odstátněny všechny komponenty, které jsou nepotřebné z důvodu výše popsaných změn. Schéma návrhu je dostupné v obrázku \ref{fig:sda00}.
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{img/sda00.drawio.pdf}
+    \caption{Topologie zapojení lokací}
+    \label{fig:sda00}
+\end{figure}
+
+Toto schéma je znázorněno na topologii sekundární lokace. Provedené změny budou stejné i v primárních lokací. Toto schéma je lehce vertikálně škálovatelné. Na úrovni Core layer se nachází dva routery. Jsou zachovány technologie MultiChassis Etherchannel a Virtual Switch Link.
+
+\subsection{Přechod na SD-Access}
+V cílech této práce je představit návrh pro integraci SD-Access technologií. Toto je určitě zajímavá změna, která může přinést hodně benefitů. V případě, zavedení SD-Access se velmi zjednoduší administrace sítě. Síť se stane výrazně bezpečnější, jednodušší a snáze škálovatelnou. Nevýhodou zavedení SD-Access je nutnost nákupu zařízení, které podporují SD-Access. Jedná se o následující zařízení.
+
+Fabric edge node (FEN) jedná se typicky o L3 switch, které podporují SDN technologii. Tyto zařízení budou použita všude, kde se koncová zařízeni a uživatelé připojují do sítě.
+
+Fabric border node (FBN) jedná se typicky o routery, které podporují SDN technologii. Tyto zařízení budou použita všude, kde se naše lokace, datacentra... připojují na SD-WAN providera.
+
+Fabric control node (FCN) jedná se o spojení ISE a DNA-C. Tyto zařízení budou kontrolovat celou SD-Access infrastrukturu.
+
+Fabric vireless LAN router (FVLR) jedná se o zařízení, které bude kontrolovat všechna bezdrátová připojení v naší síti.
+
+Níže je rozšířeno stávající schéma s popisky výše zmíněných zařízení \ref{fig:sda01}.
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{img/sda01.drawio.pdf}
+    \caption{Topologie zapojení loakcí}
+    \label{fig:sda01}
+\end{figure}
+
+\subsection{Integrace SD-Access}
+Výše popsané změny jsou primárně topologické. Velkou část zadávení těchto změn bude nastavení a integrace se stávajícími službami. Vzhledem k tomu, že mé znalosti v konfiguraci a integraci SDN jsou velmi omezené a čistě teoretické, bude v této části popsán pouze základ.
+
+Základem infrastruktury organizace moucha.org bude AD. AD bude umístěno v datacentru. AD budou soužit pro uchovávání informací o uživatelných (LDAP). AD bude sloužit primárně k autentizaci a případně autorizaci uživatelů.
+
+Fabric control node bude sloužit k operování celé SD-Access sítě. DNA-C spolu s ISE bude vytvářet potřebné tunely pro komunikaci v rámci sítě. ISE bude sloužit k nastavování pravidel pro popsanou síť. Obě tyto zařízení budou součástí datacentra. Vzhledem k návrhu SD-Access, lze velmi podrobně definovat práva pro komunikace v rámci organizace. Díky tomuto je možné spojit DC a DMZ pod jednotnou infrastrukturu.
+
+Připojení z nelokální sítě (dříve VPN) bude nahrazeno FED, který bude disponovat publick IP adresou. Toto umožňuje nový způsob nelokálního přípojení, kdy uživatel naváže komunikaci s FED zařízením. Toto připojení je validováno pomocí FCN a pokud je schváleno, pak vytvoří potřebný tunel na připojení do vnitřku organizace.
+
+FVLR bude sloužit pro uchovávání a vytváření bezdrátových spojení.
+\newpage
+\section{Závěr}
+Tento dokument diskutoval a podal návrh na změnu síťové infrastruktury pro organizaci moucha.org. Hlavní náplní této práce je prezentovat možnost nabízené technologií SDN. Zmíněné návrhy by mohli přinést lepší spravovatelnost, údržbu, škálovatelnost a údržbu celé infrastruktury. Zmíněná infrastruktura by měla být zcela redundantní a z pohledu uživatele nepřinést téměř žádnou změnu oproti stávající topologii. Nevýhodou mohou být finanční náklady spjaté s migrací. Po migraci by následně cena za údržbu a správu měla klesnout. Nevýhodou může být i nedostatek kvalifikované pracovní síly se zkušenostmi v oblasti SDN.
+
+Závěrem by se dalo říct, že práce splnila výše stanovené cíle. Věřím, že tato práce může pomoct s návrhem reálné síťové topologie, případně jako studijní materiál v oblasti SDN.
+\newpage
+\printbibliography
+\newpage
+\section*{Seznam zkratek}
+
+\begin{tabular}{l l}
+ AD & Active Directory \\
+ CNI  & Container Network Interface\\
+ DC  & Data centrum\\
+ DMZ  & Demilitarized zone\\
+ FCN  & Fabric Constrol Node\\
+ FED  & Fabric Edge Node\\
+ FPGA  & Programovatelné hradlové pole\\
+ FW  & Firewall\\
+ HW  & Hardware\\
+ IP  & Internet protokol\\
+ ISE  & Cisco Identity Services Engine\\
+ LAN  & Local Area Network \\
+ MEC  & Multichassis EtherChannel \\
+ MP  & Management Plane\\
+ MPLS  & Multiprotocol Label Switching\\
+ MS  & Microsoft\\
+ NAS  & Network Attached Storage\\
+ PSTN  & Public Switched Telephone Network\\
+ SDN  & Software-defined networking\\
+ VSL  & Virtual Switch Link\\
+ WAN  & Wide Area Network\\
+ WLAN  & Wireless Local Area Network\\
+ ZTP  & Zero-touch provisioning\\
+\end{tabular}
+
+\end{document}

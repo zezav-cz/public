@@ -1,0 +1,222 @@
+/* --- CSS PROMĚNNÉ (Light & Dark Mode) --- */
+:root {
+    --bg-color: #f4f7f6;
+    --card-bg: #ffffff;
+    --text-color: #2c3e50;
+    --accent-color: #3498db;
+    --heading-color: #1a1a1a;
+    --code-bg: #f6f8fa; /* Light theme code background */
+    --toc-border: #f0f0f0;
+    --sidebar-text: #555;
+    --inline-code-bg: #f1f3f5;
+    --inline-code-color: #d63384;
+    --sidebar-width: 220px;
+}
+
+[data-theme="dark"] {
+    --bg-color: #0d1117;
+    --card-bg: #161b22;
+    --text-color: #c9d1d9;
+    --accent-color: #58a6ff;
+    --heading-color: #f0f6fc;
+    --code-bg: #0d1117; /* Dark theme code background */
+    --toc-border: #30363d;
+    --sidebar-text: #8b949e;
+    --inline-code-bg: #21262d;
+    --inline-code-color: #ff7b72;
+}
+
+/* --- ZÁKLADNÍ NASTAVENÍ --- */
+* { box-sizing: border-box; }
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+    margin: 0;
+    padding: 20px;
+    transition: background-color 0.3s, color 0.3s;
+    
+    display: grid;
+    /* Rozvržení: Sidebar | Článek (max 1100px) | Vyvažovací sloupec */
+    grid-template-columns: var(--sidebar-width) minmax(700px, 1100px) 1fr;
+    gap: 30px;
+    justify-content: center;
+}
+
+/* --- FIXNÍ PŘEPÍNAČ TÉMATU (Vlevo dole) --- */
+#theme-toggle {
+    position: fixed;
+    bottom: 25px;
+    left: 25px;
+    z-index: 1000;
+    background: var(--card-bg);
+    color: var(--text-color);
+    border: 1px solid var(--toc-border);
+    padding: 10px 18px;
+    border-radius: 50px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#theme-toggle:hover {
+    background: var(--accent-color);
+    color: white;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* --- SIDEBAR (Ostatní příspěvky) --- */
+#sidebar-left {
+    padding-top: 40px;
+    position: sticky;
+    top: 20px;
+    height: fit-content;
+}
+
+#sidebar-left h3 { 
+    font-size: 0.75rem; 
+    text-transform: uppercase; 
+    color: #95a5a6; 
+    margin-bottom: 15px; 
+    letter-spacing: 1px;
+}
+
+#sidebar-left ul { list-style: none; padding: 0; }
+#sidebar-left li { margin-bottom: 10px; }
+#sidebar-left a { 
+    text-decoration: none; 
+    color: var(--sidebar-text); 
+    font-size: 0.9rem; 
+    transition: color 0.2s;
+}
+#sidebar-left a:hover { color: var(--accent-color); }
+
+/* --- ČLÁNEK --- */
+article {
+    background: var(--card-bg);
+    padding: 40px 60px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    border-radius: 12px;
+    display: grid;
+    grid-template-columns: 1fr 240px; 
+    grid-template-areas: 
+        "header header"
+        "content toc"
+        "footer footer";
+    gap: 40px;
+    align-items: start;
+}
+
+header { 
+    grid-area: header; 
+    border-bottom: 2px solid var(--toc-border); 
+    padding-bottom: 20px; 
+    margin-bottom: 20px; 
+}
+
+h1 { 
+    font-size: 2.4rem; 
+    margin: 0; 
+    color: var(--heading-color); 
+    letter-spacing: -0.8px;
+    line-height: 1.2;
+}
+
+/* --- OBSAH A TEXT --- */
+main { grid-area: content; min-width: 0; }
+main p { margin-bottom: 0.75rem; font-size: 1.05rem; }
+
+/* Kódové bloky - BEZ RÁMEČKU */
+pre.highlight {
+    background-color: var(--code-bg) !important;
+    border: none !important;
+    border-radius: 8px;
+    padding: 1.25rem;
+    margin: 1.5rem 0;
+    overflow-x: auto;
+}
+
+pre code {
+    background: none !important;
+    padding: 0 !important;
+    font-size: 0.95rem;
+}
+
+/* Inline kód */
+code {
+    font-family: "SFMono-Regular", Consolas, monospace;
+    font-size: 0.9em;
+    background: var(--inline-code-bg);
+    color: var(--inline-code-color);
+    padding: 0.2em 0.4em;
+    border-radius: 4px;
+}
+
+/* Obrázky bez borderu */
+main img, .imageblock img {
+    border: none !important;
+    box-shadow: none !important;
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+
+/* --- TOC (Vpravo) --- */
+#toc {
+    grid-area: toc;
+    position: sticky;
+    top: 40px;
+    font-size: 0.85rem;
+    border-left: 1px solid var(--toc-border);
+    padding-left: 20px;
+}
+
+#toc strong { 
+    display: block; 
+    margin-bottom: 12px; 
+    color: #95a5a6; 
+    text-transform: uppercase; 
+    font-size: 0.7rem; 
+}
+
+#toc ul { list-style: none; padding: 0; margin: 0; }
+#toc li { margin-bottom: 8px; }
+#toc a { text-decoration: none; color: var(--sidebar-text); }
+#toc a:hover { color: var(--accent-color); }
+
+/* --- PATIČKA --- */
+footer {
+    grid-area: footer;
+    margin-top: 50px;
+    padding-top: 25px;
+    border-top: 1px solid var(--toc-border);
+    text-align: center;
+    font-size: 0.85rem;
+    color: #95a5a6;
+}
+
+/* --- RESPONZIVITA --- */
+@media (max-width: 1200px) {
+    body { grid-template-columns: 1fr; padding: 10px; }
+    article { 
+        grid-template-columns: 1fr; 
+        grid-template-areas: "header" "toc" "content" "footer"; 
+        padding: 30px; 
+    }
+    #sidebar-left { display: none; }
+    #toc {
+        position: static;
+        border-left: none;
+        border-bottom: 1px solid var(--toc-border);
+        padding: 0 0 20px 0;
+        margin-bottom: 20px;
+    }
+}

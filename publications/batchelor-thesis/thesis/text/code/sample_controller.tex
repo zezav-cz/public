@@ -1,0 +1,15 @@
+\begin{lstfloat}
+\begin{lstlisting}[
+language=C,
+caption={[Implementace kontroleru]Implementace kontroleru \cite{nguyen_2017_a}},
+label={sample:controller}
+]
+for {
+  desired := getDesiredState()
+  current := getCurrentState()
+  if current != desired {
+    makeChanges(desired, current)
+  }
+}
+\end{lstlisting}
+\end{lstfloat}

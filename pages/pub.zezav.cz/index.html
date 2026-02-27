@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Publications — Jan Troják</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+    }
+  </script>
+  <style>
+    html { transition: background-color 0.3s, color 0.3s; }
+    .bibtex-block { font-family: 'Courier New', Courier, monospace; font-size: 0.82rem; white-space: pre-wrap; word-break: break-all; }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-900 dark:bg-gray-950 dark:text-gray-100 min-h-screen transition-colors duration-300">
+
+  <script src="translations.js"></script>
+  <script src="https://zezav.cz/components.js"></script>
+  <script>renderHeader('Publications - Jan Troják');</script>
+
+  <!-- Main -->
+  <main class="max-w-4xl mx-auto px-4 py-8">
+    <p class="text-gray-600 dark:text-gray-400 mb-8" data-i18n="pubIntro">
+      Academical, Personal projects and publications by <strong>Jan Troják</strong>.
+    </p>
+
+    <div class="space-y-6" id="publications">
+      <!-- rendered from publications.json -->
+    </div>
+  </main>
+
+  <!-- Footer rendered by components.js -->
+
+  <script>
+    renderFooter();
+
+    // ── Language badge colours ────────────────────────────────────
+    const langColors = {
+      English: 'bg-sky-100 text-sky-800 dark:bg-sky-900 dark:text-sky-200',
+      Czech:   'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200',
+    };
+
+    const tagColors = {
+      'Bachelor Thesis': 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200',
+      'Master Thesis':   'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200',
+      Presentation:      'bg-rose-100 text-rose-800 dark:bg-rose-900 dark:text-rose-200',
+    };
+
+    // ── Date formatting helper ───────────────────────────────────
+    function formatDate(d) {
+      if (!d) return '';
+      // "2024-12" → "December 2024", "2024" → "2024"
+      const parts = d.split('-');
+      if (parts.length === 1) return parts[0];
+      const date = new Date(parts[0], (parts[1] || 1) - 1);
+      return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+    }
+
+    // ── Escape HTML helper ───────────────────────────────────────
+    function esc(s) {
+      const el = document.createElement('span');
+      el.textContent = s;
+      return el.innerHTML;
+    }
+
+    // ── Language labels for abstracts / keywords ────────────────
+    const langLabels = { cs: 'Czech', en: 'English', sk: 'Slovak', de: 'German' };
+
+    // ── Render a collapsible section (abstracts, bibtex) ─────────
+    function collapsible(label, inner) {
+      return `<details class="foldable group">
+        <summary class="cursor-pointer text-xs font-medium text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 select-none list-none [&::-webkit-details-marker]:hidden">
+          <span class="fold-arrow inline-block transition-transform duration-200 mr-1">&#9654;</span>${label}
+        </summary>
+        <div class="mt-2">${inner}</div>
+      </details>`;
+    }
+
+    // ── Render one publication card ──────────────────────────────
+    function renderCard(pub) {
+      const langBadge = langColors[pub.language] || langColors.English;
+      const badges = `<span class="text-xs font-medium px-2 py-0.5 rounded-full ${langBadge}">${esc(pub.language)}</span>`
+        + (pub.tags || []).map(t => {
+            const tc = tagColors[t] || 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200';
+            return `<span class="text-xs font-medium px-2 py-0.5 rounded-full ${tc}">${esc(t)}</span>`;
+          }).join('');
+
+      // Title: show second title if present (language-agnostic)
+      const secondTitleHtml = pub.secondTitle
+        ? `<span class="block text-sm font-normal text-gray-500 dark:text-gray-400 italic">${esc(pub.secondTitle)}</span>`
+        : '';
+
+      const linksHtml = (pub.links || []).map(l =>
+        `<span>•</span><a href="${esc(l.url)}" class="hover:underline text-blue-500" target="_blank" rel="noopener">${esc(l.label)}</a>`
+      ).join('');
+
+      // Abstracts (foldable, multi-language)
+      let abstractsHtml = '';
+      if (pub.abstracts && Object.keys(pub.abstracts).length) {
+        const entries = Object.entries(pub.abstracts);
+        const inner = entries.map(([lang, text]) =>
+          `<div class="mb-2 last:mb-0">
+            ${entries.length > 1 ? `<span class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">${esc(langLabels[lang] || lang)}</span>` : ''}
+            <p class="text-sm text-gray-600 dark:text-gray-400 mt-0.5">${esc(text)}</p>
+          </div>`
+        ).join('');
+        abstractsHtml = collapsible('Abstract', `<div class="p-3 rounded-lg bg-gray-100 dark:bg-gray-800">${inner}</div>`);
+      }
+
+      // Keywords (multi-language)
+      let keywordsHtml = '';
+      if (pub.keywords && Object.keys(pub.keywords).length) {
+        const entries = Object.entries(pub.keywords);
+        const inner = entries.map(([lang, words]) =>
+          `<div class="mb-1 last:mb-0">
+            ${entries.length > 1 ? `<span class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase mr-1">${esc(langLabels[lang] || lang)}:</span>` : ''}
+            ${words.map(w => `<span class="inline-block text-xs px-2 py-0.5 mr-1 mb-1 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">${esc(w)}</span>`).join('')}
+          </div>`
+        ).join('');
+        keywordsHtml = collapsible('Keywords', `<div class="p-3 rounded-lg bg-gray-100 dark:bg-gray-800">${inner}</div>`);
+      }
+
+      // BibTeX (foldable)
+      const bibtexHtml = pub.bibtex
+        ? collapsible('BibTeX', `<div class="p-3 rounded-lg bg-gray-100 dark:bg-gray-800 overflow-x-auto"><code class="bibtex-block text-gray-800 dark:text-gray-200">${esc(pub.bibtex)}</code></div>`)
+        : '';
+
+      return `
+        <article class="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-5 shadow-sm hover:shadow-md transition-shadow">
+          <div class="flex flex-wrap items-start justify-between gap-2 mb-2">
+            <h2 class="text-lg font-semibold">
+              ${pub.links && pub.links.length
+                ? `<a href="${esc(pub.links[0].url)}" class="hover:underline text-blue-600 dark:text-blue-400" target="_blank" rel="noopener">${esc(pub.title)}</a>`
+                : `<span>${esc(pub.title)}</span>`}
+              ${secondTitleHtml}
+            </h2>
+            <div class="flex gap-2 flex-shrink-0">${badges}</div>
+          </div>
+          <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">${esc(pub.description)}</p>
+          <div class="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-500 mb-3">
+            <time>${esc(formatDate(pub.date))}</time>
+            ${linksHtml}
+          </div>
+          <div class="space-y-2">
+            ${abstractsHtml}
+            ${keywordsHtml}
+            ${bibtexHtml}
+          </div>
+        </article>`;
+    }
+
+    // ── Load data and render ─────────────────────────────────────
+    const pubData = {};
+
+    function renderPublications(lang) {
+      const pubs = pubData[lang] || pubData['en'];
+      if (!pubs) return;
+      const container = document.getElementById('publications');
+      container.innerHTML = pubs.map(renderCard).join('');
+      container.querySelectorAll('details.foldable').forEach(d => {
+        d.addEventListener('toggle', () => {
+          const arrow = d.querySelector('.fold-arrow');
+          if (arrow) arrow.style.transform = d.open ? 'rotate(90deg)' : '';
+        });
+      });
+    }
+
+    Promise.all([
+      fetch('publications.en.json').then(r => r.json()).then(d => { pubData.en = d; }),
+      fetch('publications.cs.json').then(r => r.json()).then(d => { pubData.cs = d; }),
+    ])
+      .then(() => {
+        renderPublications(document.documentElement.lang || 'en');
+
+        // Re-render when language is toggled
+        const btn = document.getElementById('lang-toggle');
+        if (btn) btn.addEventListener('click', () => {
+          setTimeout(() => renderPublications(document.documentElement.lang), 0);
+        });
+      })
+      .catch(err => {
+        document.getElementById('publications').innerHTML =
+          `<p class="text-red-500">Failed to load publications: ${esc(err.message)}</p>`;
+      });
+  </script>
+</body>
+</html>

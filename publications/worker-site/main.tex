@@ -1,0 +1,101 @@
+
+
+\documentclass[czech]{pyt-report}
+
+\usepackage[utf8]{inputenc}
+
+\title{Webová aplikace pro odevzdávání pracovních výkazů}
+
+\author{Jan Troják}
+\affiliation{ČVUT--FIT}
+\email{trojaj12@fit.cvut.cz}
+
+\def\file#1{{\tt#1}}
+
+\begin{document}
+
+\maketitle
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Úvod}
+Tento dokument slouží jako report k semestrální práci z předmětu BI-PYT.
+
+Tématem této semestrální práce je webová aplikace pro odevzdávání pracovních výkazů.
+
+Tato aplikace by měla splňovat alespoň rámcové zadání práce.
+\textit{Vytvořte webovou aplikaci, která bude sloužit pro evidenci odvedené práce. Uživatelé budou mít možnost přihlašování do aplikace. Po přihlášení mohou spravovat své výkazy práce, mohou je měnit, smazat, a vytvářet. Každý výkaz by měl obsahovat základní informace o odvedené práci (kategorie, činnost, začátek, konec a počet odpracovaných hodin). Aplikace by měla poskytovat přehled vytvořených výkazů za pomocí filtrace obsahu.}
+
+
+\section{Použité technologie}
+K vypracování této aplikace jsem se rozhodl použít \textit{django} framework. \textit{Django} je open-source webový framework. K použité \textit{djanga} jsem se rozhodl z následujících důvodů. \textit{Django} je hojně používaný v praxi, je velmi dobře dokumentován a poskytuje řadu hotových řešení, jako je například autentifikace uživatelů, které pomáhají při vývoji. 
+
+Další klíčová komponenta, kterou aplikace používá je \textit{bootstrap}. \textit{Botstrap} je sada kaskádových stylů, které usnadňují tvorbu vzhledu aplikace. 
+
+Poslední použitá komponenta, kterou je důležité zmínit, je \textit{matplotlib}. \textit{Matplotlib} je vykreslovací knihovna pro grafické zobrazení grafů. Tato knihovna byla použita pro zobrazení základního přehledu výkazů formou grafů.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Stručný popis klíčových částí implementace}
+
+    \subsection{Databáze}
+Základem aplikace je databáze, pro ukládání pracovních výkazů. Aplikace obsahuje 5 hlavních modelů. Tyto modely jsou \textit{\mbox{WorkReport}}, \textit{\mbox{Project}}, \textit{\mbox{TypeOfWork}}, \textit{\mbox{CustomUser}}, \textit{\mbox{Group}}.
+
+Nejzásadnější model je \textit{\mbox{WorkReport}}. Tato entita uchovává informace o jednotlivých záznamem. Tato tabulka je zároveň napojena na tabulky \textit{\mbox{Project}} \textit{\mbox{TypeOfWork}} a \textit{\mbox{CustomUser}}.
+
+Velmi důležitá entita je tabulka \textit{\mbox{Group}}, která uchovává informace o roli uživatele. Na základě těchto rolí jsou uživatelům přidělena práva k jednotlivým operacím.
+
+    \subsection{Přihlašování}
+Pro správný chod aplikace je zásadní možnost přihlašování a autentifikace uživatelů. Django pro tyto případy přichází s předpřipraveným systémem na verifikaci uživatelů\footnote{https://docs.djangoproject.com/en/3.1/topics/auth/}, který je v aplikaci použit. Tento systém komunikuje s již zmíněným modelem \textit{\mbox{CustomUser}}. 
+
+Aplikace je navržena tak, aby umožnila pracovat s výkazy pouze přihlášeným uživatelům. Pokud se někdo pokusí používat aplikaci bez přihlášení, bude mu zamítnut přístup a bude přesměrován na stránku s přihlášením. 
+
+Nové uživatele může přidávat pouze administrátor stránky, který má přístup do admin rozhraní aplikace.
+
+V případě, že některý z uživatelů zapomene heslo, může nechat automaticky nové heslo resetovat.
+
+
+    \subsection{Práva}
+V případě, že se uživatel přihlásí, může web používat na základě práv, která jsou mu přidělena. Aplikace je navržena tak, že rozlišuje dvě různé role, které může uživatel mít. Konkrétně se jedná o roli \textit{\mbox{admin (administrator)}} a roli \textit{\mbox{worker (pracovník)}}.
+
+Uživatel, kterému byla přiřazena role \textit{\mbox{pracovníka}}, může zakládat nové projekty, editovat, smazat a vytvářet vlastní pracovní výkazy. V případě, že by se uživatel pokusil o jakoukoliv editaci cizího výkazu, bude mu tato operace zamítnuta.
+
+Uživatel se statusem \textit{\mbox{administrátora}} má stejná práva jako \textit{\mbox{pracovník}}. Zároveň má pravomoc editovat, smazat a vytvářet výkazy za ostatní kolegy.
+
+
+\subsection{Zobrazování přehledů}
+Aby aplikace mohla fungovat, tak musí uživatelům zprostředkovat přehledy odevzdaných reportů.
+
+Pro rychlý přehled slouží úvodní stránka, kde se může uživatel podívat na základní informace.
+
+Ke sdělování informací jsou použity tabulky, grafy a zobrazování průběžných součtů.
+
+V případě, že se návštěvník stránky potřebuje dozvědět více, může využít přehledové tabulky, ve kterých může interaktivně filtrovat.
+
+Zároveň je do aplikace přidána funkce, která umožňuje exportovat data v \textit{pdf} a \textit{csv} formátu.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% --- VYSLEDKY
+\section{Výsledky}
+Výsledkem je aplikace na zprávu pracovních výkazů v malých firmách. Aplikace je plně funkční a připravená na nasazení. Celý web je navržen tak, aby jej bylo snadné upravit do podoby, která přesně vyhovuje požadavkům. Zároveň je velmi snadné napojit další komponenty do aplikace, jako například kalendář, email\ldots
+
+V případě nasazení aplikace na server, je nutné vyřešit emailový server, který je potřeba pro resetování hesel. Dále je nutné zabezpečit databázový server a server, na kterém běží samotná aplikace.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% --- ZAVER
+\section{Závěr}
+I přesto, že aplikace je plně funkční a použitelná k svému účelu, věřím, že existují lepší řešení pro evidenci práce. Proto bych případné zájemce odkázal na hotová řešení jako jsou \textit{redmine\footnote{https://www.redmine.org/}}...
+
+Vypracováním této práce jsem se naučil základy \textit{django} frameworku. Ze začátku jsem s \textit{djangem} hodně bojoval. Nyní si myslím, že jsem pochopil základní koncepty, na kterých můžu stavět své znalosti dál.
+
+Na vytváření full-stack bych \textit{djagno} nedoporučil, i přesto že framwork k těmto účelům určen. Framework je podle mě skvělou volbou pro tvorbu backendových částí aplikací. Pro frontendové části existují, dle mého názoru, lepší technologie.
+\\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% --- Bibliography
+\nocite{vincent_2018}
+\nocite{django}
+\nocite{CryceTruly}
+
+\bibliography{reference}
+
+\end{document}

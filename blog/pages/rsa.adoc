@@ -1,0 +1,114 @@
+= Matematický aparát pro RSA
+:slug: math-rsa
+:tags: security, cryptography
+:authors: zezav
+:toc: macro
+:stem: latexmath
+
+toc::[]
+
+== Eulerova funkce latexmath:[\phi]
+
+Nechť latexmath:[c \in \mathbb{N}], **Eulerova funkce** latexmath:[\phi] udává počet čísel latexmath:[k \in \{1, \dots, c-1\}], která jsou nesoudělná s latexmath:[c] ( latexmath:[\gcd(c,k) = 1] ).
+
+[latexmath]
+++++
+\phi(c) = n \Leftrightarrow \\
+\exists o \in \widehat{c-1} \forall i \in o : |o|=n \wedge \gcd(c,i)=1 \\
+\wedge \\
+\forall o \in \widehat{c-1} \exists i \in o : |o|>n \rightarrow \gcd(c,i) \neq 1
+++++
+
+Pro výpočet Eulerovy funkce lze využít rozkladu na prvočinitele následujícím způsobem:
+
+[latexmath]
+++++
+\phi(c) = \prod_{\forall p \in P} (p-1)
+++++
+
+kde latexmath:[P] je množina všech unikátních prvočíselných dělitelů latexmath:[c] (pro latexmath:[c] jako součin unikátních prvočísel).
+
+---
+
+== Definice (z FIT ČVUT)
+
+=== Eulerova funkce latexmath:[\phi(n)]
+
+Eulerova funkce latexmath:[\phi(n) : \mathbb{N^+} \rightarrow \mathbb{N^+}] udává počet kladných celých čísel menších nebo rovných latexmath:[n], která jsou nesoudělná s latexmath:[n].
+
+=== Věta o latexmath:[\phi(m \cdot n)]
+
+Nechť latexmath:[m, n \in \mathbb{N}] a latexmath:[\gcd(m, n) = 1]. Potom latexmath:[\phi(m \cdot n) = \phi(m) \cdot \phi(n)].
+
+==== Pozorování
+
+Nechť latexmath:[n = p_1^{\alpha_1} \cdot p_2^{\alpha_2} \dots p_k^{\alpha_k}] je kanonický rozklad složeného čísla latexmath:[n \in \mathbb{N^+}]. Potom:
+
+[latexmath]
+++++
+\phi(n) = n \left( 1 - \frac{1}{p_1} \right) \left( 1 - \frac{1}{p_2} \right) \dots \left( 1 - \frac{1}{p_k} \right)
+++++
+
+==== Důsledek
+
+Důsledek vede na vztah:
+
+[latexmath]
+++++
+\begin{aligned}
+\phi(n) &= n \cdot \prod_{\forall p_i \in P} \left( 1 - \frac{1}{p_i} \right) \\
+\phi(n) &= n \cdot \prod \left( \frac{p_i-1}{p_i} \right) = n \cdot \prod \left( \frac{1}{p_i} \right) \cdot \prod (p_i-1) \\
+\phi(n) &= n \cdot \frac{1}{n} \cdot \prod (p_i-1) \\
+\phi(n) &= \prod_{\forall p_i \in P}(p_i-1)
+\end{aligned}
+++++
+
+---
+
+== Složitost problému faktorizace
+
+Faktorizace čísla na prvočinitele patří do třídy **NP** (přesněji se předpokládá, že leží v průniku NP a co-NP a není v P).
+
+Neexistuje a nepředpokládá se existence klasického algoritmu, který dokáže faktorizaci provést v polynomiálním čase.
+
+link:https://stackoverflow.com/a/2642528/10209148[[zdroj]]
+
+---
+
+== Složitost problému výpočtu Eulerovy funkce latexmath:[\phi(n)]
+
+Výpočet Eulerovy funkce má stejnou složitost jako faktorizace čísla latexmath:[n]. Pokud známe faktorizaci, je výpočet triviální. Bez ní je výpočet v obecném případě považován za výpočetně ekvivalentní faktorizaci.
+
+---
+
+== RSA
+
+* Nechť latexmath:[p] a latexmath:[q] jsou velká prvočísla.
+* Nechť latexmath:[n = p \cdot q]
+* Zvolte latexmath:[e], které splňuje: latexmath:[1 < e < \phi(n)] a latexmath:[\gcd(e, \phi(n)) = 1].
+* Nechť latexmath:[d \equiv e^{-1} \pmod{\phi(n)}] (modulární multiplikativní inverze).
+
+**Privátní klíč** je pár latexmath:[SK = (n, d)]
+
+**Veřejný klíč** je pár latexmath:[PK = (n, e)]
+
+=== Proces šifrování
+
+[latexmath]
+++++
+c = m^e \pmod{n}
+++++
+
+=== Proces dešifrování
+
+[latexmath]
+++++
+m = c^d \pmod{n} = (m^e)^d \pmod{n} = m^{e \cdot d} \pmod{n}
+++++
+_Díky Eulerově větě platí latexmath:[m^{e \cdot d} \equiv m \pmod{n}]._
+
+---
+
+== Bonus
+
+Použitá prvočísla latexmath:[p] a latexmath:[q] v příkladech bývají často malá (např. v řádu bitů). To je bezpečnostní problém; taková čísla nezaručují výpočetní bezpečnost. Ze znalosti veřejného klíče latexmath:[(e, n)] lze pomocí faktorizace nalézt čísla latexmath:[p] a latexmath:[q], vypočítat latexmath:[\phi(n)] a násled
