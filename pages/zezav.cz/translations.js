@@ -16,7 +16,6 @@ const i18n = {
     publications: [
       {
         title: 'Design and Implementation of a Scalable, On-Premise Infrastructure for Large-Scale Data Gathering, Processing, and Storage in Machine Learning Applications',
-        folder: null,
         description: 'Design of a private computing environment for gathering and analyzing large collections of digital images with distributed storage and automated processing pipelines.',
         language: 'English',
         date: '2026',
@@ -27,7 +26,6 @@ const i18n = {
       },
       {
         title: 'Network Communication of Kubernetes Applications with External Devices in a Private Network',
-        folder: 'batchelor-thesis/',
         description: 'Extending Kubernetes with TCP/UDP addressing of devices in adjacent private networks via a custom operator.',
         language: 'Czech',
         date: '2023',
@@ -38,7 +36,6 @@ const i18n = {
       },
       {
         title: 'Distributed Block and Object Storage',
-        folder: 'distributed-storage-solutions/',
         description: 'Survey of storage solutions (block, file-system, object) and distributed storage architectures: replication, erasure coding, scalability.',
         language: 'English',
         date: '2025',
@@ -48,7 +45,6 @@ const i18n = {
       },
       {
         title: 'As-Far-As-Possible LE Algorithm Implementation',
-        folder: 'as-far-as-possible-le/',
         description: 'Implementation and evaluation of the As-Far-As-Possible leader election algorithm in distributed systems using gRPC. NI-DSV course assignment.',
         language: 'English',
         date: '2024',
@@ -56,17 +52,17 @@ const i18n = {
         links: [{ label: 'PDF', url: 'https://zezav.cz/files/afap-le.pdf' }],
       },
       {
-        title: 'NI-MCC: Merge Sort',
-        folder: 'merge-sort/',
+        title: 'Merge Sort',
         description: 'Semester project on sequential and parallel (multi-core) merge sort implementations with benchmarking and analysis.',
         language: 'Czech',
         date: '2024',
         tags: [],
-        links: [{ label: 'PDF', url: 'https://zezav.cz/files/merge-sort.pdf' }],
+        links: [
+          // { label: 'PDF', url: 'https://zezav.cz/files/merge-sort.pdf' }
+        ],
       },
       {
         title: 'Moucha.org Migration to SD-WAN and SD-Access',
-        folder: 'sdn-migration/',
         description: 'Proposal for migrating moucha.org network infrastructure from traditional networking to SDN (SD-WAN, SD-Access).',
         language: 'Czech',
         date: '2024',
@@ -74,8 +70,7 @@ const i18n = {
         links: [{ label: 'PDF', url: 'https://zezav.cz/files/sdn-migration.pdf' }],
       },
       {
-        title: 'NI-GPU: Merge Sort & Bitonic Sort on GPU',
-        folder: 'NI-GPU/',
+        title: 'Merge Sort & Bitonic Sort on GPU',
         description: 'CUDA implementations of merge sort and bitonic sort with CPU vs GPU performance comparison.',
         language: 'Czech',
         date: '2024',
@@ -83,8 +78,7 @@ const i18n = {
         links: [],
       },
       {
-        title: 'NI-PDP: Knight Swap on a Chessboard',
-        folder: 'NI-PDP/',
+        title: 'Knight Swap on a Chessboard',
         description: 'Parallelized knight-swap problem on a chessboard with multiple parallelization strategies.',
         language: 'Czech',
         date: '2024',
@@ -93,7 +87,6 @@ const i18n = {
       },
       {
         title: 'Normality and Its Perception',
-        folder: 'normality/',
         description: 'Reflective essay on the variability and relativity of cultural norms and normality perception.',
         language: 'Czech',
         date: '2024',
@@ -102,7 +95,6 @@ const i18n = {
       },
       {
         title: 'Windows Reverse RDP Attack (CVE-2019-0887)',
-        folder: 'windows-reverse-rdp-attack/',
         description: 'Beamer presentation on the CVE-2019-0887 reverse RDP vulnerability. BI-SSB course project.',
         language: 'Czech',
         date: '2021',
@@ -111,7 +103,6 @@ const i18n = {
       },
       {
         title: 'Web Application for Submitting Work Reports',
-        folder: 'worker-site/',
         description: 'Report on a Django-based web application for submitting and managing work time-sheets. BI-PYT semester project.',
         language: 'Czech',
         date: '2022',
@@ -137,7 +128,6 @@ const i18n = {
     publications: [
       {
         title: 'Návrh a implementace škálovatelné místní infrastruktury pro shromažďování, zpracování a ukládání dat ve velkém měřítku v aplikacích strojového učení',
-        folder: null,
         description: 'Návrh soukromého výpočetního prostředí pro shromažďování a analýzu rozsáhlých kolekcí digitálních obrazů s distribuovaným úložištěm a automatizovanými zpracovávacími procesy.',
         language: 'Angličtina',
         date: '2026',
@@ -148,7 +138,6 @@ const i18n = {
       },
       {
         title: 'Síťová komunikace aplikací v Kubernetes s externími zařízeními v privátní síti',
-        folder: 'batchelor-thesis/',
         description: 'Rozšíření Kubernetes o adresování a komunikaci se zařízeními v privátních sítích přes TCP/UDP pomocí vlastního Kubernetes operátoru.',
         language: 'Čeština',
         date: '2023',
@@ -159,7 +148,6 @@ const i18n = {
       },
       {
         title: 'Distribuované blokové a objektové úložiště',
-        folder: 'distributed-storage-solutions/',
         description: 'Přehled úložných řešení (blokové, souborové, objektové) a architektur distribuovaného úložiště: replikace, erasure kódování, škálovatelnost.',
         language: 'Angličtina',
         date: '2025',
@@ -169,7 +157,6 @@ const i18n = {
       },
       {
         title: 'Implementace algoritmu volby vedoucího As-Far-As-Possible',
-        folder: 'as-far-as-possible-le/',
         description: 'Implementace a vyhodnocení algoritmu volby vedoucího As-Far-As-Possible v distribuovaných systémech pomocí gRPC. Semestrální projekt kurzu NI-DSV.',
         language: 'Angličtina',
         date: '2024',
@@ -177,17 +164,17 @@ const i18n = {
         links: [{ label: 'PDF', url: 'https://zezav.cz/files/afap-le.pdf' }],
       },
       {
-        title: 'NI-MCC: Merge Sort',
-        folder: 'merge-sort/',
+        title: 'Merge Sort',
         description: 'Semestrální projekt zaměřený na sekvenční a paralelní (vícejadrové) implementace řazení merge sort s benchmarkingem a analýzou výsledků.',
         language: 'Čeština',
         date: '2024',
         tags: [],
-        links: [{ label: 'PDF', url: 'https://zezav.cz/files/merge-sort.pdf' }],
+        links: [
+          // { label: 'PDF', url: 'https://zezav.cz/files/merge-sort.pdf' }
+        ],
       },
       {
         title: 'Moucha.org migrace na SD-WAN a SD-Access',
-        folder: 'sdn-migration/',
         description: 'Návrh migrace síťové infrastruktury moucha.org z tradičního síťování na SDN (SD-WAN, SD-Access).',
         language: 'Čeština',
         date: '2024',
@@ -195,8 +182,7 @@ const i18n = {
         links: [{ label: 'PDF', url: 'https://zezav.cz/files/sdn-migration.pdf' }],
       },
       {
-        title: 'NI-GPU: Merge Sort & Bitonic Sort na GPU',
-        folder: 'NI-GPU/',
+        title: 'Merge Sort & Bitonic Sort na GPU',
         description: 'CUDA implementace merge sort a bitonic sort s porovnáním výkonu CPU oproti GPU.',
         language: 'Čeština',
         date: '2024',
@@ -204,8 +190,7 @@ const i18n = {
         links: [],
       },
       {
-        title: 'NI-PDP: Výměna jezdců na šachovnici',
-        folder: 'NI-PDP/',
+        title: 'Výměna jezdců na šachovnici',
         description: 'Paralelizace problému výměny jezdců na šachovnici s různými strategiemi paralelizace.',
         language: 'Čeština',
         date: '2024',
@@ -214,7 +199,6 @@ const i18n = {
       },
       {
         title: 'Normalita a její vnímání',
-        folder: 'normality/',
         description: 'Reflexivní esej o variabilitě a relativitě kulturních norem a vnímání normality.',
         language: 'Čeština',
         date: '2024',
@@ -223,7 +207,6 @@ const i18n = {
       },
       {
         title: 'Windows Reverse RDP Attack (CVE-2019-0887)',
-        folder: 'windows-reverse-rdp-attack/',
         description: 'Beamer prezentace ke zranitelnosti CVE-2019-0887 (reverse RDP attack). Projekt kurzu BI-SSB.',
         language: 'Čeština',
         date: '2021',
@@ -232,7 +215,6 @@ const i18n = {
       },
       {
         title: 'Webová aplikace pro odevzdávání pracovních výkazů',
-        folder: 'worker-site/',
         description: 'Zpráva o Django webové aplikaci pro odevzdávání a správu pracovních výkazů. Semestrální projekt kurzu BI-PYT.',
         language: 'Čeština',
         date: '2022',
