@@ -1,7 +1,6 @@
 // ── Bootstrap ────────────────────────────────────────────────
-renderHeader('Jan Troják');
-
-// (footer is rendered after the DOM is ready — see bottom)
+initTheme();
+initLang();
 
 // ── Language badge colours ────────────────────────────────────
 const langColors = {
@@ -129,8 +128,7 @@ function renderAll(lang) {
   renderPublications(lang);
 }
 
-// ── Init: footer + deferred render after initLang() ──────────
-renderFooter();
+// ── Init: deferred render after initLang() ──────────
 
 setTimeout(() => {
   const lang = document.documentElement.lang || 'en';
