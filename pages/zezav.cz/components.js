@@ -84,8 +84,6 @@ function renderFooter() {
             <span>&bull;</span>
             <a href="https://zezav.cz" class="hover:underline">Jan Troják</a>
             <span>&bull;</span>
-            <a href="https://pub.zezav.cz" class="hover:underline">Publications</a>
-            <span>&bull;</span>
             <a href="https://blog.zezav.cz" class="hover:underline">Blog</a>
             <span>&bull;</span>
             <a href="" data-i18n="cvLabel" data-i18n-href="cvHref" class="hover:underline">CV</a>
