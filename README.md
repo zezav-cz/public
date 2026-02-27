@@ -27,3 +27,12 @@ dagger call blog build export --path dist/blog.zezav.cz
 ```bash
 dagger call pub build export --path dist/publications
 ```
+
+
+## Publishing
+```bash
+dagger call publish --artifacts dist/zezav.cz --dest-path zezav.cz --server z01.de.zezav.cz --ssh-key file://~/.ssh/id_ed25519
+dagger call publish --artifacts dist/pub.zezav.cz --dest-path pub.zezav.cz --server z01.de.zezav.cz --ssh-key file://~/.ssh/id_ed25519
+dagger call publish --artifacts dist/publications --dest-path pub.zezav.cz/files --server z01.de.zezav.cz --ssh-key file://~/.ssh/id_ed25519
+dagger call publish --artifacts dist/blog.zezav.cz --dest-path blog.zezav.cz --server z01.de.zezav.cz --ssh-key file://~/.ssh/id_ed25519
+```
