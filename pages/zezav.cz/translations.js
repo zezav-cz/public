@@ -32,7 +32,7 @@ const i18n = {
         tags: ['Bachelor Thesis', 'Awarded'],
         keywords: ['Kubernetes', 'CNI', 'network driver', 'private network segment', 'edge cloud computing', 'Kubernetes operator', 'networking', 'TCP', 'UDP', 'K8S'],
         abstract: 'This thesis explores the networking capabilities of Kubernetes. The aim of the thesis was to extend Kubernetes with the possibility of addressing and communicating with devices in private networks. Known solutions only provide communication using high-level protocols. The goal was to find a solution that would support communication using lower layer ISO/OSI protocols. This thesis presents the possibility of extending the kubernetes system with the mentioned functionalities of network communication. This method allows communication with devices in private networks using TCP and UDP protocols. The presented solution offers flexibility of use and does not present any limitation restricting standard use of Kubernetes. The solution is implemented using established standards for extending the system. The results of this work provide wider possibilities for the use of Kubernetes. With this extension, it is possible to make better use of Kubernetes in the areas of testing, smart cities and other areas working with devices in private networks.',
-        links: [{ label: 'DSpace', url: 'https://dspace.cvut.cz/entities/publication/5e7bcab8-8695-4f67-bdb6-fe75976b5201' }],
+        links: [{ label: 'PDF', url: 'https://zezav.cz/files/batchelor-thesis.pdf' }],
       },
       {
         title: 'Distributed Block and Object Storage',
@@ -144,7 +144,7 @@ const i18n = {
         tags: ['Bakalářská práce', 'Oceněno'],
         keywords: ['Kubernetes', 'CNI', 'síťový ovladač', 'privátní síťový segment', 'edge cloud computing', 'Kubernetes operátor', 'síťování', 'TCP', 'UDP', 'K8S'],
         abstract: 'Tato práce se zabývá možnostmi síťování v systému Kubernetes. Cílem práce bylo rozšířit Kubernetes o možnost adresace a komunikace cloudu se zařízeními v privátních sítích. Známá řešení poskytují pouze komunikaci pomocí vysokoúrovňových protokolů. Cílem bylo nalézt řešení, které by podporovalo protokoly nižších vrstev ISO/OSI. Práce představuje možnost rozšíření systému Kubernetes o zmíněnou funkcionality síťové komunikace. Tento způsob umožňuje komunikaci pomocí TCP a UDP protokolů se zařízeními v privátních sítích. Představené řešení nabízí flexibilitu použití a nepředstavuje žádná omezení pro standardní použití systému Kubernetes. Řešení je realizováno pomocí zavedených standardů pro rozšiřování systému. Výsledky této práce poskytují širší možnosti pro použití systému Kubernetes. Díky tomuto rozšíření je možné lépe využít systém Kubernetes v oblastech testování, smart cities a dalších oblastech pracujících se zařízeními v privátních sítích.',
-        links: [{ label: 'DSpace', url: 'https://dspace.cvut.cz/entities/publication/5e7bcab8-8695-4f67-bdb6-fe75976b5201' }],
+        links: [{ label: 'PDF', url: 'https://zezav.cz/files/batchelor-thesis.pdf' }],
       },
       {
         title: 'Distribuované blokové a objektové úložiště',

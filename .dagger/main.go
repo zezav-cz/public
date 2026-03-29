@@ -25,8 +25,8 @@ func New(
 	srcPages *dagger.Directory,
 ) *Public {
 	return &Public{
-		Pub:  &Publications{Src: srcPublications},
-		Blog: &Blog{Src: srcBlog, TemplateDir: "template"},
+		Pub:   &Publications{Src: srcPublications},
+		Blog:  &Blog{Src: srcBlog, TemplateDir: "template"},
 		Pages: &Pages{Src: srcPages},
 	}
 }
@@ -52,13 +52,12 @@ func (m *Public) Publish(
 		WithExec([]string{"apk", "add", "--no-cache", "rsync", "openssh-client"}).
 		WithMountedSecret("/id_pubkey", sshKey).
 		WithNewFile("/root/.ssh/config", "StrictHostKeyChecking no\n")
-
 	// Rsync
 	return ctr.
 		WithMountedDirectory("/tmp/artifacts", artifacts).
 		WithExec([]string{
 			"sh", "-c",
-			fmt.Sprintf("rsync -avz -e 'ssh -i /id_pubkey' /tmp/artifacts/ %s@%s:%s", user, server, destPath),
+			fmt.Sprintf("rsync -rvztL --chmod=D755,F644 --chown=uploader:www-data -e 'ssh -i /id_pubkey' /tmp/artifacts/ %s@%s:%s", user, server, destPath),
 		}).
 		Stdout(ctx)
 }

@@ -1,5 +1,6 @@
 dist
 .dist
+CLAUDE.md
 
 # Ignore all PDFs by default
 *.pdf
@@ -23,3 +24,8 @@ dist
 !publications/batchelor-thesis/assets/images/sampleNet.pdf
 !publications/batchelor-thesis/assets/images/pod.pdf
 !publications/batchelor-thesis/assets/images/lab.pdf
+
+publications/NI-GPU/
+publications/NI-PDP/
+publications/diploma-thesis/
+publications/merge-sort/
