@@ -1,7 +1,7 @@
 #import "@preview/basic-resume:0.1.3": *
 
 // Put your personal information here, replacing mine
-#let name = "Jan Troják"
+#let name = "Ing. Jan Troják"
 #let location = "Prague, CZ"
 #let email = "trojakjan24@gmail.com"
 #let github = "github.com/zezav-cz"
@@ -56,14 +56,12 @@ I would say that I am not really that much into programming of large high-level 
   #edu(
     institution: "Master specialization Computer Systems and Networks",
     location: "Prague, CZ",
-    dates: dates-helper(start-date: "Sep 2023", end-date: "2026"),
+    dates: dates-helper(start-date: "Sep 2023", end-date: "06 2026"),
     degree: "Czech Technical University in Prague | Faculty of Information Technology",
   )
   - *Computer science*: \ Combinatorial Optimization using heuristics, Grid parallel computing, Modern Networking (SDNs, MPLS…), GPU computing, Network security, Virtualization and cloud computing, Multi-core CPUs Computing, Distributed systems, Basics of nonSQL databases
   - *Programming*: \ C++, Cuda, Basics of Ruby
   - *Security*: \ Basics of reverse engineering
-
-  I have finished the Master’s program and am waiting for the state exams and thesis evaluation.
 ]
 
 === Additional
@@ -110,7 +108,7 @@ I would say that I am not really that much into programming of large high-level 
     name: "Personal Cloud Infrastructure",
     url: "zezav.cz",
   )
-  In my free time, I develop and maintain my own cloud infrastructure. It currently consists of a small number of virtual machines hosted at a cloud provider with a peer-to-peer CDN. I use it to host static content, personal services, monitoring, a game server, and a VPN. It serves as a playground for testing and learning new technologies.
+  In my free time, I develop and maintain my own cloud infrastructure. It currently consists of a small number of virtual machines hosted at a cloud provider with a peer-to-peer SDN. I use it to host static content, personal services, monitoring, a game server, and a VPN. It serves as a playground for testing and learning new technologies.
 ]
 #block(breakable: false)[
   #project(

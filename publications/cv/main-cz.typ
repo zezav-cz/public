@@ -1,7 +1,7 @@
 #import "@preview/basic-resume:0.1.3": *
 
 // Put your personal information here, replacing mine
-#let name = "Jan Troják"
+#let name = "Ing. Jan Troják"
 #let location = "Prague, CZ"
 #let email = "trojakjan24@gmail.com"
 #let github = "github.com/zezav-cz"
@@ -56,14 +56,12 @@ Na rozdíl od vývoje aplikací mě více zajímá jádro IT a informatiky. Fasc
   #edu(
     institution: "Magisterská specializace Počítačové systémy a sítě",
     location: "Praha, CZ",
-    dates: dates-helper(start-date: "09 2023", end-date: "2026"),
+    dates: dates-helper(start-date: "09 2023", end-date: "06 2026"),
     degree: "České vysoké učení technické v Praze | Fakulta informačních technologií",
   )
   - *Informatika*: \ Kombinatorická optimalizace pomocí heuristiky, paralelní výpočty v gridové síti, moderní sítě (SDN, MPLS…), výpočty na GPU, bezpečnost sítí, virtualizace a cloud computing, výpočty na vícejádrových procesorech, distribuované systémy, základy databází nonSQL
   - *Programování*: \ C++, Cuda, základy Ruby
   - *Bezpečnost*: \ Základy reverzního inženýrství
-
-  Dokončil jsem magisterský program a čekám na státní zkoušky a hodnocení diplomové práce.
 ]
 
 === Další
@@ -110,7 +108,7 @@ Na rozdíl od vývoje aplikací mě více zajímá jádro IT a informatiky. Fasc
     name: "Osobní cloudová infrastruktura",
     url: "zezav.cz",
   )
-  Ve volném čase vyvíjím a spravuji vlastní cloudovou infrastrukturu. V současné době se skládá z menšího počtu virtuálních strojů hostovaných u cloudového poskytovatele s peer-to-peer CDN. Používám ji k hostování statického obsahu, osobních služeb, monitoringu, herního serveru a VPN. Slouží mi jako prostředí pro testování a učení se novým technologiím.
+  Ve volném čase vyvíjím a spravuji vlastní cloudovou infrastrukturu. V současné době se skládá z menšího počtu virtuálních strojů hostovaných u cloudového poskytovatele s peer-to-peer SDN. Používám ji k hostování statického obsahu, osobních služeb, monitoringu, herního serveru a VPN. Slouží mi jako prostředí pro testování a učení se novým technologiím.
 ]
 #block(breakable: false)[
   #project(

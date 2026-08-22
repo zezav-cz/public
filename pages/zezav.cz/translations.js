@@ -9,6 +9,7 @@ const i18n = {
       { name: 'zezav-terraform', url: 'https://github.com/zezav-cz/zezav-terraform', description: 'Zezav (personal) Cloud infrastructure provisioning with OpenTofu.' },
       { name: 'zezav-bolt', url: 'https://github.com/zezav-cz/zezav-bolt', description: 'Infrastructure as Code repository for managing personal cloud services and servers using Puppet Bolt.' },
       { name: 'public', url: 'https://github.com/zezav-cz/public', description: 'A central repository for my public static content: personal website, blog posts, academic papers, and project reports.' },
+      { name: 'diploma-thesis', url: 'https://github.com/zezav-cz/diploma-thesis', description: 'Source code accompanying my master\'s thesis "Design and Implementation of a Scalable, On-Premise Infrastructure for Large-Scale Data Gathering, Processing, and Storage in Machine Learning Applications".' },
     ],
     updated: 'Updated',
     cvLabel: 'CV (en)',
@@ -22,7 +23,7 @@ const i18n = {
         tags: ['Master Thesis'],
         keywords: ['Machine learning infrastructure', 'Image processing', 'Distributed data storage', 'Small file problem', 'Data pipelines', 'On-premise solutions', 'Performance autoscaling'],
         abstract: 'This thesis describes the design of a private computing environment for gathering and analyzing large collections of digital images. The system solves a common efficiency problem where managing millions of individual small items causes systems to slow down due to administrative overhead. By choosing a specialized storage method that keeps the directory information in fast memory and groups items into larger packages, the system ensures nearly instant access to any single item. This setup was built on dedicated physical hardware to provide full control over data privacy and costs, avoiding the need for public internet-based storage. The second part of the thesis presents an automated processing pipeline that enables data transformation, such as computing image representations. This pipeline is designed to be highly available and scalable based on the workload. Through the use of automated scaling mechanisms, the system actively adjusts its resources in response to the volume of incoming tasks, maintaining high throughput during peak periods while optimizing efficiency when the load is low.',
-        links: [],
+        links: [{ label: 'PDF', url: 'https://zezav.cz/files/diploma-thesis.pdf' }],
       },
       {
         title: 'Network Communication of Kubernetes Applications with External Devices in a Private Network',
@@ -121,6 +122,7 @@ const i18n = {
       { name: 'zezav-terraform', url: 'https://github.com/zezav-cz/zezav-terraform', description: 'Zezav (osobní) Poskytování cloudové infrastruktury pomocí OpenTofu.' },
       { name: 'zezav-bolt', url: 'https://github.com/zezav-cz/zezav-bolt', description: 'Repozitář Infrastructure as Code pro správu osobních cloudových služeb a serverů pomocí Puppet Bolt.' },
       { name: 'public', url: 'https://github.com/zezav-cz/public', description: 'Centrální úložiště mého veřejného statického obsahu: osobní webové stránky, příspěvky na blogu, akademické články a zprávy o projektech.' },
+      { name: 'diploma-thesis', url: 'https://github.com/zezav-cz/diploma-thesis', description: 'Zdrojové kódy k mé diplomové práci „Návrh a implementace škálovatelné místní infrastruktury pro shromažďování, zpracování a ukládání dat ve velkém měřítku v aplikacích strojového učení“.' },
     ],
     updated: 'Aktualizováno',
     cvLabel: 'CV (cs)',
@@ -134,7 +136,7 @@ const i18n = {
         tags: ['Diplomová práce'],
         keywords: ['Infrastruktura strojového učení', 'Zpracování obrazu', 'Distribuované ukládání dat', 'Problém malých souborů', 'Datové potrubí', 'On-premise řešení', 'Automatické škálování'],
         abstract: 'Tato práce popisuje návrh soukromého výpočetního prostředí pro shromažďování a analýzu velkých sbírek digitálních obrazů. Systém řeší běžný problém s efektivitou, kdy správa milionů jednotlivých malých položek způsobuje zpomalení systémů kvůli administrativní zátěži. Díky volbě specializované metody ukládání, která uchovává informace o adresářích v rychlé paměti a seskupuje položky do větších balíčků, systém zajišťuje téměř okamžitý přístup k jakémukoliv souboru. Toto nastavení bylo vytvořeno na specializovaném fyzickém hardwaru, aby bylo možné plně kontrolovat soukromí dat a náklady a vyhnout se nutnosti veřejného internetového úložiště. Druhá část práce představuje automatizovaný zpracovatelský proces, který umožňuje transformaci dat, například výpočet obrazových reprezentací. Tento proces je navržen tak, aby byl vysoce dostupný a škálovatelný na základě pracovní zátěže. Díky použití automatizovaných škálovacích mechanismů systém aktivně přizpůsobuje své zdroje v závislosti na objemu příchozích úkolů, čímž udržuje vysokou propustnost během špiček a zároveň optimalizuje efektivitu při nízké zátěži.',
-        links: [],
+        links: [{ label: 'PDF', url: 'https://zezav.cz/files/diploma-thesis.pdf' }],
       },
       {
         title: 'Síťová komunikace aplikací v Kubernetes s externími zařízeními v privátní síti',

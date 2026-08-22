@@ -42,6 +42,7 @@ func (m *Blog) Build(
 	container := m.prepareContainer(ctx)
 
 	output := dag.Directory().
+		WithFile("index.html", m.Src.File("index.html")).
 		WithFile("aes.html", m.buildPage(ctx, container, m.Src.Directory(PageRelativePath).File("aes.adoc"))).
 		WithFile("rsa.html", m.buildPage(ctx, container, m.Src.Directory(PageRelativePath).File("rsa.adoc"))).
 		WithFile("side-channel.html", m.buildPage(ctx, container, m.Src.Directory(PageRelativePath).File("side-channel.adoc")))

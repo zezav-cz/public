@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"dagger/public/internal/dagger"
 )
@@ -55,9 +56,12 @@ func (m *Public) Publish(
 	// Rsync
 	return ctr.
 		WithMountedDirectory("/tmp/artifacts", artifacts).
+		// Publishing is a side effect — bust Dagger's cache so rsync runs on every call
+		WithEnvVariable("CACHEBUSTER", time.Now().String()).
 		WithExec([]string{
 			"sh", "-c",
-			fmt.Sprintf("rsync -rvztL --chmod=D755,F644 --chown=uploader:www-data -e 'ssh -i /id_pubkey' /tmp/artifacts/ %s@%s:%s", user, server, destPath),
+			// --perms is required for --chmod to take effect on the receiver
+			fmt.Sprintf("rsync -rpvztL --chmod=D755,F644 --chown=uploader:www-data -e 'ssh -i /id_pubkey' /tmp/artifacts/ %s@%s:%s", user, server, destPath),
 		}).
 		Stdout(ctx)
 }

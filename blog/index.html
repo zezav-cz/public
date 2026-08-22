@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog — zezav.cz</title>
+    <link rel="stylesheet" href="./style.css">
+    <script>
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        if (savedTheme === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        }
+    </script>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 60px 20px;
+        }
+        .container {
+            background: var(--card-bg);
+            padding: 40px 60px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border-radius: 12px;
+            max-width: 700px;
+            width: 100%;
+        }
+        h1 {
+            font-size: 2rem;
+            margin: 0 0 10px 0;
+            color: var(--heading-color);
+        }
+        .wip {
+            display: inline-block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #f59e0b;
+            background: rgba(245, 158, 11, 0.1);
+            padding: 4px 10px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+        .description {
+            color: var(--sidebar-text);
+            margin-bottom: 30px;
+            font-size: 1.05rem;
+        }
+        .posts { list-style: none; padding: 0; margin: 0; }
+        .posts li {
+            padding: 14px 0;
+            border-bottom: 1px solid var(--toc-border);
+        }
+        .posts li:last-child { border-bottom: none; }
+        .posts a {
+            text-decoration: none;
+            color: var(--accent-color);
+            font-size: 1.05rem;
+            font-weight: 500;
+        }
+        .posts a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+<button id="theme-toggle" title="Toggle dark/light mode">
+    <span class="icon">🌓</span>
+    <span class="text">Theme</span>
+</button>
+
+<div class="container">
+    <h1>Blog</h1>
+    <span class="wip">Work in progress</span>
+    <p class="description">This blog is still under construction. In the meantime, you can preview the articles below.</p>
+    <ul class="posts">
+        <li><a href="aes.html">Understanding AES Encryption: A Deep Dive</a></li>
+        <li><a href="rsa.html">Matematický aparát pro RSA</a></li>
+        <li><a href="side-channel.html">Útoky postranními kanály: Jak útočníci zneužívají vedlejší stopy</a></li>
+    </ul>
+</div>
+
+<script>
+    const btn = document.getElementById('theme-toggle');
+    btn.addEventListener('click', () => {
+        let currentTheme = document.documentElement.getAttribute('data-theme');
+        let targetTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', targetTheme);
+        localStorage.setItem('theme', targetTheme);
+    });
+</script>
+</body>
+</html>
